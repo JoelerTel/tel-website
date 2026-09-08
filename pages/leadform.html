@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Service | Texas Electric and Light</title>
+    <meta name="description" content="Schedule electrical services in Austin. Free estimates for residential and commercial electrical work. Licensed electricians available 24/7.">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-['Raleway']">
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto">
+                <h1 class="text-4xl font-bold mb-8 text-center">Schedule Service</h1>
+                
+                <form id="serviceRequest" class="space-y-6">
+                    <!-- Contact Information -->
+                    <div class="bg-gray-50 p-6 rounded-lg space-y-4">
+                        <h2 class="text-xl font-bold mb-4">Contact Information</h2>
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 mb-2">First Name *</label>
+                                <input type="text" required 
+                                       class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2">Last Name *</label>
+                                <input type="text" required 
+                                       class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 mb-2">Phone *</label>
+                                <input type="tel" required 
+                                       class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2">Email *</label>
+                                <input type="email" required 
+                                       class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Details -->
+                    <div class="bg-gray-50 p-6 rounded-lg space-y-4">
+                        <h2 class="text-xl font-bold mb-4">Service Details</h2>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Service Type *</label>
+                            <select required class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent">
+                                <option value="">Select a Service</option>
+                                <option value="emergency">Emergency Service</option>
+                                <option value="repair">Electrical Repair</option>
+                                <option value="inspection">Safety Inspection</option>
+                                <option value="panel">Panel Upgrade</option>
+                                <option value="lighting">Lighting Installation</option>
+                                <option value="ev-charger">EV Charger Installation</option>
+                                <option value="commercial">Commercial Service</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 mb-2">Preferred Date</label>
+                            <input type="date" class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 mb-2">Property Type</label>
+                            <select class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent">
+                                <option value="residential">Residential</option>
+                                <option value="commercial">Commercial</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 mb-2">Service Address</label>
+                            <input type="text" placeholder="Street Address" 
+                                   class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent mb-2">
+                            <input type="text" placeholder="City" 
+                                   class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 mb-2">Project Details</label>
+                            <textarea rows="4" placeholder="Please describe your electrical needs" 
+                                      class="w-full p-3 border rounded focus:ring-2 focus:ring-lime-green focus:border-transparent"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Preferred Contact -->
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h2 class="text-xl font-bold mb-4">Contact Preference</h2>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="contact_preference" value="phone" 
+                                       class="mr-2 text-lime-green">
+                                <span>Phone</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="contact_preference" value="email" 
+                                       class="mr-2 text-lime-green">
+                                <span>Email</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="contact_preference" value="text" 
+                                       class="mr-2 text-lime-green">
+                                <span>Text Message</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            class="w-full bg-lime-green text-black py-4 rounded-lg text-lg font-bold hover:opacity-90 transition-opacity">
+                        Submit Service Request
+                    </button>
+
+                    <p class="text-sm text-gray-600 text-center">
+                        * Required fields. By submitting this form, you agree to be contacted about our services.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('serviceRequest').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add form submission logic here
+            // Example: API call, email service integration, etc.
+            alert('Thank you! We will contact you shortly to confirm your service request.');
+        });
+    </script>
+</body>
+</html>
