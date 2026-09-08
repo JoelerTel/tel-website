@@ -314,6 +314,29 @@
             background-color: var(--lime-green);
             color: var(--text-dark);
         }
+
+        /* Force all body text and links to black - override Tailwind defaults */
+        a { color: inherit; }
+        p, li, span, td { color: #374151; }
+        .text-gray-700 { color: #374151 !important; }
+        section p, section li, section span { color: #374151; }
+        /* Learn more links - black with underline on hover */
+        section a:not(.bg-lime-green):not([class*="border"]):not([class*="bg-"]):not(.nav-link):not(.hover\:text-lime-green):not([class*="block"]) {
+            color: #111827 !important;
+            text-decoration: none;
+        }
+        section a:not(.bg-lime-green):not([class*="border"]):not([class*="bg-"]):not(.nav-link):not(.hover\:text-lime-green):not([class*="block"]):hover {
+            text-decoration: underline;
+        }
+        /* Fix checkmark SVG icons - keep lime green */
+        .service-check { color: #BFC921; }
+        /* Footer links stay as-is */
+        footer a { color: #d1d5db; }
+        footer a:hover { color: #BFC921; }
+        /* Nav links black */
+        header a { color: #111827; }
+        /* Italic testimonial text */
+        .italic { color: #374151; }
     </style>
 </head>
 <body>
@@ -469,37 +492,37 @@
                         </p>
                         <ul class="space-y-2 mb-6">
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>City of Austin rental inspection compliance</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>GFCI outlet installation in kitchens, bathrooms & outdoor areas</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Smoke detector and safety device wiring</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Multi-unit property electrical maintenance</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Pre-lease electrical inspections to protect landlord liability</span>
                             </li>
                         </ul>
-                        <a href="../../../pages/services/safety-inspections.html" class="font-medium hover:underline" style="color: var(--lime-green);">
+                        <a href="../../../pages/services/safety-inspections.html" class="font-medium hover:underline" style="color: #111827;">
                             Learn more about electrical safety inspections →
                         </a>
                     </div>
@@ -518,37 +541,37 @@
                         </p>
                         <ul class="space-y-2 mb-6">
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>100A to 200A service upgrades</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Federal Pacific and Zinsco panel replacements</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Aluminum wiring remediation</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Circuit additions for modern electrical loads</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Outlet additions for high-density occupancy</span>
                             </li>
                         </ul>
-                        <a href="../../../pages/services/panel-upgrades.html" class="font-medium hover:underline" style="color: var(--lime-green);">
+                        <a href="../../../pages/services/panel-upgrades.html" class="font-medium hover:underline" style="color: #111827;">
                             Learn more about panel upgrades →
                         </a>
                     </div>
@@ -565,31 +588,31 @@
                         </p>
                         <ul class="space-y-2 mb-6">
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Dedicated circuits for home offices and research equipment</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>USB outlet and charging station installation</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Whole-home surge protection for expensive electronics</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Ethernet wiring and networking infrastructure</span>
                             </li>
                         </ul>
-                        <a href="../../../pages/services/smart-home.html" class="font-medium hover:underline" style="color: var(--lime-green);">
+                        <a href="../../../pages/services/smart-home.html" class="font-medium hover:underline" style="color: #111827;">
                             Learn more about home office electrical →
                         </a>
                     </div>
@@ -608,31 +631,31 @@
                         </p>
                         <ul class="space-y-2 mb-6">
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Condo unit electrical upgrades and panel modifications</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>EV charger installation in parking structures</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>Smart home integration in modern units</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="w-5 h-5 mt-1 mr-2" style="color: var(--lime-green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-1 mr-2 service-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 <span>HOA and building management coordination</span>
                             </li>
                         </ul>
-                        <a href="../../../pages/services/ev-charger.html" class="font-medium hover:underline" style="color: var(--lime-green);">
+                        <a href="../../../pages/services/ev-charger.html" class="font-medium hover:underline" style="color: #111827;">
                             Learn more about EV charger installation →
                         </a>
                     </div>
@@ -802,37 +825,37 @@
                     <p class="mb-4">Texas Electric and Light proudly serves all neighborhoods surrounding the University of Texas campus, including:</p>
                     <ul class="grid grid-cols-2 gap-2 mb-6">
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 mr-2" style="color: var(--lime-green);" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 mr-2 service-check" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                             </svg>
                             West Campus
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 mr-2" style="color: var(--lime-green);" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 mr-2 service-check" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                             </svg>
                             North Campus
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 mr-2" style="color: var(--lime-green);" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 mr-2 service-check" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                             </svg>
                             The Drag / Guadalupe
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 mr-2" style="color: var(--lime-green);" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 mr-2 service-check" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                             </svg>
                             Riverside / Near South
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 mr-2" style="color: var(--lime-green);" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 mr-2 service-check" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                             </svg>
                             Hyde Park Border
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 mr-2" style="color: var(--lime-green);" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 mr-2 service-check" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                             </svg>
                             UT Campus Facilities
