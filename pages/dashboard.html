@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEL Dashboard</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lime: #BFC921;
+      --lime-dim: #9ba81a;
+      --bg: #111827;
+      --surface: #1f2937;
+      --surface2: #374151;
+      --border: #374151;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --danger: #ef4444;
+      --amber: #f59e0b;
+      --green: #10b981;
+    }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── LOCK SCREEN ── */
+    #lockScreen {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    #lockScreen .lock-logo {
+      font-size: 13px; font-weight: 600; letter-spacing: .08em;
+      color: var(--lime); margin-bottom: 40px; text-transform: uppercase;
+    }
+    #lockScreen .lock-logo span { color: var(--muted); font-weight: 400; }
+    #lockScreen h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    #lockScreen p { color: var(--muted); margin-bottom: 28px; font-size: 13px; }
+    #lockScreen input {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 12px 16px; border-radius: 6px;
+      font-family: inherit; font-size: 14px; width: 280px;
+      outline: none; margin-bottom: 12px; display: block;
+      letter-spacing: .1em;
+    }
+    #lockScreen input:focus { border-color: var(--lime); }
+    #lockScreen .lock-btn {
+      width: 280px; background: var(--lime); color: #111; border: none;
+      padding: 12px; border-radius: 6px; font-family: inherit;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: background .15s;
+    }
+    #lockScreen .lock-btn:hover { background: var(--lime-dim); }
+    #lockScreen .lock-err {
+      color: var(--danger); font-size: 12px; margin-top: 8px;
+      height: 16px;
+    }
+
+    /* ── APP SHELL ── */
+    #app { display: none; height: 100vh; overflow: hidden; flex-direction: row; }
+
+    /* ── SIDEBAR ── */
+    aside {
+      width: 220px; min-width: 220px;
+      background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 24px 0;
+      overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .sidebar-logo .company { font-size: 13px; font-weight: 700; color: var(--lime); letter-spacing: .06em; }
+    .sidebar-logo .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    nav a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 20px; color: var(--muted);
+      text-decoration: none; font-size: 13px; font-weight: 500;
+      border-left: 2px solid transparent;
+      transition: color .12s, border-color .12s, background .12s;
+    }
+    nav a:hover { color: var(--text); background: rgba(255,255,255,.03); }
+    nav a.active { color: var(--lime); border-left-color: var(--lime); background: rgba(191,201,33,.06); }
+    nav a svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    .sidebar-section-label {
+      font-size: 10px; letter-spacing: .1em; color: var(--surface2);
+      text-transform: uppercase; padding: 16px 20px 6px; font-weight: 600;
+    }
+
+    .sidebar-footer {
+      margin-top: auto; padding: 16px 20px 0;
+      border-top: 1px solid var(--border);
+    }
+    .sidebar-footer .who { font-size: 12px; color: var(--muted); }
+    .sidebar-footer .who strong { color: var(--text); display: block; }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1; overflow-y: auto; padding: 32px 36px;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .page-header p { font-size: 13px; color: var(--muted); }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 20px;
+    }
+    .card-title {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--muted); margin-bottom: 16px;
+    }
+
+    /* ── GRID LAYOUTS ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+
+    /* ── STAT TILE ── */
+    .stat-tile {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 20px 20px 16px;
+    }
+    .stat-tile .label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 10px; }
+    .stat-tile .value { font-size: 28px; font-weight: 700; color: var(--lime); line-height: 1; }
+    .stat-tile .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .stat-tile .delta { font-size: 12px; margin-top: 4px; }
+    .stat-tile .delta.up { color: var(--green); }
+    .stat-tile .delta.down { color: var(--danger); }
+
+    /* ── TABLE ── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      text-align: left; font-size: 11px; font-weight: 600;
+      color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+      padding: 0 0 10px; border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid rgba(55,65,81,.5); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 10px 0; color: var(--text); vertical-align: middle; }
+    tbody td.muted { color: var(--muted); }
+    .bar-wrap { width: 120px; background: var(--bg); border-radius: 2px; height: 4px; }
+    .bar-fill { height: 4px; border-radius: 2px; background: var(--lime); }
+
+    /* ── STATUS BADGE ── */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+    }
+    .badge-green { background: rgba(16,185,129,.15); color: #34d399; }
+    .badge-amber { background: rgba(245,158,11,.15); color: #fbbf24; }
+    .badge-lime { background: rgba(191,201,33,.15); color: var(--lime); }
+    .badge-red { background: rgba(239,68,68,.15); color: #f87171; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 16px; border-radius: 6px; border: none;
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .15s;
+    }
+    .btn-primary { background: var(--lime); color: #111; }
+    .btn-primary:hover { background: var(--lime-dim); }
+    .btn-ghost {
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--surface2); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    /* ── OAUTH PANEL ── */
+    .oauth-state { text-align: center; padding: 48px 24px; }
+    .oauth-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .oauth-state p { color: var(--muted); font-size: 13px; margin-bottom: 24px; max-width: 380px; margin-left: auto; margin-right: auto; }
+    .oauth-state .scope-list {
+      background: var(--bg); border-radius: 6px; padding: 16px;
+      text-align: left; margin-bottom: 24px; max-width: 340px;
+      margin-left: auto; margin-right: auto;
+    }
+    .oauth-state .scope-list li {
+      font-size: 12px; color: var(--muted); list-style: none;
+      padding: 4px 0; display: flex; align-items: center; gap: 8px;
+    }
+    .oauth-state .scope-list li::before { content: '✓'; color: var(--lime); font-weight: 700; }
+
+    /* ── CONNECT SECTION ── */
+    .connect-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+    .connect-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 20px; text-align: center;
+    }
+    .connect-card .svc-icon { font-size: 28px; margin-bottom: 10px; }
+    .connect-card .svc-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .connect-card .svc-status { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+    /* ── CONTENT GENERATOR ── */
+    .gen-form { display: flex; flex-direction: column; gap: 16px; }
+    .gen-form label { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; }
+    .gen-form select, .gen-form input, .gen-form textarea {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 12px; border-radius: 6px;
+      font-family: inherit; font-size: 13px; outline: none;
+      transition: border-color .12s;
+    }
+    .gen-form select:focus, .gen-form input:focus, .gen-form textarea:focus {
+      border-color: var(--lime);
+    }
+    .gen-form textarea { min-height: 80px; resize: vertical; }
+
+    .gen-output {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 20px; margin-top: 20px;
+      white-space: pre-wrap; font-size: 13px; line-height: 1.7;
+      color: var(--text); min-height: 120px;
+    }
+    .gen-output.empty { color: var(--muted); font-style: italic; }
+
+    .gen-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .gen-tab {
+      padding: 10px 18px; font-size: 13px; font-weight: 500;
+      color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -1px; transition: color .12s, border-color .12s;
+    }
+    .gen-tab.active { color: var(--lime); border-bottom-color: var(--lime); }
+
+    /* ── DATE RANGE PICKER ── */
+    .date-controls {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .date-controls select, .date-controls input[type="date"] {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 8px 12px; border-radius: 6px;
+      font-family: inherit; font-size: 13px; outline: none;
+    }
+    .date-controls select:focus, .date-controls input:focus { border-color: var(--lime); }
+
+    /* ── LOADING SPINNER ── */
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(191,201,33,.3); border-top-color: var(--lime);
+      border-radius: 50%; animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ALERT / NOTICE ── */
+    .notice {
+      background: rgba(191,201,33,.08); border: 1px solid rgba(191,201,33,.2);
+      border-radius: 6px; padding: 12px 16px; font-size: 13px;
+      color: var(--lime); margin-bottom: 20px;
+    }
+    .notice a { color: var(--lime); }
+
+    /* ── SETUP STEPS ── */
+    .setup-steps { counter-reset: step; display: flex; flex-direction: column; gap: 16px; }
+    .setup-step { counter-increment: step; display: flex; gap: 16px; align-items: flex-start; }
+    .setup-step::before {
+      content: counter(step); width: 24px; height: 24px;
+      background: var(--lime); color: #111; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    }
+    .setup-step .step-body { flex: 1; }
+    .setup-step .step-body strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .setup-step .step-body p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .setup-step .step-body code {
+      background: var(--bg); padding: 2px 6px; border-radius: 3px;
+      font-size: 11px; color: var(--lime); font-family: monospace;
+    }
+
+    /* ── CLIENT ID INPUT SECTION ── */
+    .cred-row { display: flex; gap: 10px; align-items: flex-end; }
+    .cred-row .field-wrap { flex: 1; }
+    .cred-row .field-wrap label { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; }
+    .cred-row input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 12px; border-radius: 6px;
+      font-family: inherit; font-size: 13px; outline: none;
+    }
+    .cred-row input:focus { border-color: var(--lime); }
+
+    /* ── METRIC ROW ── */
+    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(55,65,81,.5); }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-row .metric-label { font-size: 13px; color: var(--muted); }
+    .metric-row .metric-val { font-size: 14px; font-weight: 600; color: var(--text); }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .connect-grid { grid-template-columns: 1fr; }
+      .two-col, .three-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ LOCK SCREEN ══════════ -->
+<div id="lockScreen">
+  <div class="lock-logo">Texas Electric &amp; Light <span>/ Dashboard</span></div>
+  <h1>Private Access</h1>
+  <p>Enter your dashboard passphrase to continue.</p>
+  <input type="password" id="passInput" placeholder="Passphrase" autocomplete="current-password" />
+  <button class="lock-btn" onclick="checkPass()">Unlock</button>
+  <div class="lock-err" id="lockErr"></div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="sidebar-logo">
+      <div class="company">TEL Dashboard</div>
+      <div class="sub">texaselectricandlight.com</div>
+    </div>
+
+    <nav>
+      <div class="sidebar-section-label">Overview</div>
+      <a href="#" class="active" onclick="showPage('overview', this)">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Overview
+      </a>
+
+      <div class="sidebar-section-label">Data Sources</div>
+      <a href="#" onclick="showPage('search', this)">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search Console
+      </a>
+      <a href="#" onclick="showPage('analytics', this)">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </a>
+      <a href="#" onclick="showPage('ads', this)">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        Google Ads
+      </a>
+
+      <div class="sidebar-section-label">Content</div>
+      <a href="#" onclick="showPage('generate', this)">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Generate Content
+      </a>
+
+      <div class="sidebar-section-label">Settings</div>
+      <a href="#" onclick="showPage('setup', this)">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        Connect APIs
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="who">
+        <strong>Joel Neland</strong>
+        TECL #28315
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main>
+
+    <!-- ── OVERVIEW PAGE ── -->
+    <div class="page active" id="page-overview">
+      <div class="page-header">
+        <h2>Weekly Overview</h2>
+        <p id="overviewDateRange">Loading date range…</p>
+      </div>
+
+      <div id="overviewNotConnected" class="notice" style="display:none">
+        ⚡ APIs not connected yet. <a href="#" onclick="showPage('setup', document.querySelector('nav a[onclick*=setup]'))">Go to Connect APIs</a> to link Google Search Console, Analytics, and Ads.
+      </div>
+
+      <div class="stat-grid" id="overviewStats">
+        <div class="stat-tile"><div class="label">Organic Clicks</div><div class="value" id="ov-clicks">—</div><div class="sub">Last 28 days</div></div>
+        <div class="stat-tile"><div class="label">Impressions</div><div class="value" id="ov-impressions">—</div><div class="sub">Last 28 days</div></div>
+        <div class="stat-tile"><div class="label">Avg. Position</div><div class="value" id="ov-position">—</div><div class="sub">Search Console</div></div>
+        <div class="stat-tile"><div class="label">Ad Conversions</div><div class="value" id="ov-conversions">—</div><div class="sub">Last 28 days</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Top Queries this Week</div>
+          <div id="ov-queries-body">
+            <p style="color:var(--muted);font-size:13px">Connect Search Console to see top queries.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Top Landing Pages</div>
+          <div id="ov-pages-body">
+            <p style="color:var(--muted);font-size:13px">Connect Analytics to see landing page data.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Content Opportunities — Based on your data</div>
+        <div id="ov-opportunities">
+          <p style="color:var(--muted);font-size:13px">Connect data sources above, then click <strong style="color:var(--lime)">Refresh</strong> to see AI-generated content opportunities.</p>
+        </div>
+        <div style="margin-top:16px">
+          <button class="btn btn-primary btn-sm" onclick="loadOverview()">
+            <span id="ov-refresh-icon">↻</span> Refresh Data
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEARCH CONSOLE PAGE ── -->
+    <div class="page" id="page-search">
+      <div class="page-header">
+        <h2>Search Console</h2>
+        <p>Organic search performance for texaselectricandlight.com</p>
+      </div>
+
+      <div class="date-controls">
+        <label for="scRange" style="color:var(--muted);font-size:13px;font-weight:600">Period:</label>
+        <select id="scRange" onchange="loadSearchConsole()">
+          <option value="7">Last 7 days</option>
+          <option value="28" selected>Last 28 days</option>
+          <option value="90">Last 90 days</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="loadSearchConsole()">
+          <span class="spinner" id="sc-spinner" style="display:none"></span>
+          Load
+        </button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="label">Clicks</div><div class="value" id="sc-clicks">—</div></div>
+        <div class="stat-tile"><div class="label">Impressions</div><div class="value" id="sc-impressions">—</div></div>
+        <div class="stat-tile"><div class="label">Avg CTR</div><div class="value" id="sc-ctr">—</div></div>
+        <div class="stat-tile"><div class="label">Avg Position</div><div class="value" id="sc-pos">—</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Top Queries by Clicks</div>
+          <div id="sc-queries">
+            <p style="color:var(--muted);font-size:13px">Hit Load to fetch data.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Top Pages by Clicks</div>
+          <div id="sc-pages">
+            <p style="color:var(--muted);font-size:13px">Hit Load to fetch data.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Queries with High Impressions, Low CTR — Optimization Targets</div>
+        <div id="sc-lowctr">
+          <p style="color:var(--muted);font-size:13px">Hit Load to identify low-CTR opportunities.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ANALYTICS PAGE ── -->
+    <div class="page" id="page-analytics">
+      <div class="page-header">
+        <h2>Google Analytics</h2>
+        <p>Traffic and engagement for texaselectricandlight.com</p>
+      </div>
+
+      <div class="date-controls">
+        <label style="color:var(--muted);font-size:13px;font-weight:600">Period:</label>
+        <select id="gaRange" onchange="loadAnalytics()">
+          <option value="7days">Last 7 days</option>
+          <option value="28daysAgo" selected>Last 28 days</option>
+          <option value="90daysAgo">Last 90 days</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="loadAnalytics()">Load</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="label">Sessions</div><div class="value" id="ga-sessions">—</div></div>
+        <div class="stat-tile"><div class="label">Users</div><div class="value" id="ga-users">—</div></div>
+        <div class="stat-tile"><div class="label">Engaged Sessions</div><div class="value" id="ga-engaged">—</div></div>
+        <div class="stat-tile"><div class="label">Avg Engagement</div><div class="value" id="ga-duration">—</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Top Pages by Sessions</div>
+          <div id="ga-pages">
+            <p style="color:var(--muted);font-size:13px">Hit Load to fetch data.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Traffic by Channel</div>
+          <div id="ga-channels">
+            <p style="color:var(--muted);font-size:13px">Hit Load to fetch data.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADS PAGE ── -->
+    <div class="page" id="page-ads">
+      <div class="page-header">
+        <h2>Google Ads</h2>
+        <p>Campaign performance and spend tracking</p>
+      </div>
+
+      <div class="notice">
+        Google Ads API requires a Developer Token and Manager Account. See the Setup page for instructions. Once connected, campaign data will appear here.
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="label">Total Spend</div><div class="value" id="ads-spend">—</div></div>
+        <div class="stat-tile"><div class="label">Conversions</div><div class="value" id="ads-conv">—</div></div>
+        <div class="stat-tile"><div class="label">Cost / Conversion</div><div class="value" id="ads-cpa">—</div></div>
+        <div class="stat-tile"><div class="label">Impressions</div><div class="value" id="ads-imp">—</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Campaign Summary</div>
+        <div id="ads-campaigns">
+          <p style="color:var(--muted);font-size:13px">Connect Google Ads to see campaign performance.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GENERATE CONTENT PAGE ── -->
+    <div class="page" id="page-generate">
+      <div class="page-header">
+        <h2>Generate Content</h2>
+        <p>AI-powered blog posts, GBP updates, and social captions — informed by your real data.</p>
+      </div>
+
+      <div class="two-col" style="align-items:start">
+        <div>
+          <!-- Context panel -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Content Brief</div>
+            <div class="gen-form">
+              <div>
+                <label>Content Type</label>
+                <select id="gen-type">
+                  <option value="blog">Blog Post</option>
+                  <option value="gbp">Google Business Profile Post</option>
+                  <option value="social">Social Media Caption</option>
+                  <option value="all">All Three (Blog + GBP + Social)</option>
+                </select>
+              </div>
+              <div>
+                <label>Topic / Focus</label>
+                <input type="text" id="gen-topic" placeholder="e.g. EV charger installation, panel upgrades, summer electrical safety" />
+              </div>
+              <div>
+                <label>Target Area (optional)</label>
+                <input type="text" id="gen-area" placeholder="e.g. Dripping Springs, Austin, Westlake" />
+              </div>
+              <div>
+                <label>Data Context (paste top queries or notes from your analytics)</label>
+                <textarea id="gen-context" placeholder="Paste top search queries, notes on what's performing well, or leave blank to use defaults…"></textarea>
+              </div>
+              <div>
+                <label>Tone</label>
+                <select id="gen-tone">
+                  <option value="professional">Professional &amp; trustworthy</option>
+                  <option value="friendly">Friendly &amp; approachable</option>
+                  <option value="urgent">Urgent / safety-focused</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" id="gen-btn" onclick="generateContent()">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                Generate
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <!-- Output panel -->
+          <div class="card">
+            <div class="gen-tabs" id="genTabs">
+              <div class="gen-tab active" onclick="showGenTab('blog', this)">Blog Post</div>
+              <div class="gen-tab" onclick="showGenTab('gbp', this)">GBP Post</div>
+              <div class="gen-tab" onclick="showGenTab('social', this)">Social</div>
+            </div>
+
+            <div id="gen-output-blog" class="gen-output empty">Generated content will appear here. Fill in the brief and click Generate.</div>
+            <div id="gen-output-gbp" class="gen-output empty" style="display:none">Generated GBP post will appear here.</div>
+            <div id="gen-output-social" class="gen-output empty" style="display:none">Generated social caption will appear here.</div>
+
+            <div style="margin-top:14px;display:flex;gap:10px" id="gen-actions" style="display:none">
+              <button class="btn btn-ghost btn-sm" onclick="copyOutput()">Copy</button>
+              <button class="btn btn-ghost btn-sm" onclick="generateContent()">Regenerate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETUP / CONNECT APIS PAGE ── -->
+    <div class="page" id="page-setup">
+      <div class="page-header">
+        <h2>Connect APIs</h2>
+        <p>One-time setup to pull live data from Google. Credentials are stored in your browser only — never sent anywhere except directly to Google.</p>
+      </div>
+
+      <!-- Status -->
+      <div class="connect-grid" style="margin-bottom:28px">
+        <div class="connect-card">
+          <div class="svc-icon">🔍</div>
+          <div class="svc-name">Search Console</div>
+          <div class="svc-status" id="sc-status-label">Not connected</div>
+          <span class="badge" id="sc-status-badge" style="background:rgba(239,68,68,.15);color:#f87171">Disconnected</span>
+        </div>
+        <div class="connect-card">
+          <div class="svc-icon">📊</div>
+          <div class="svc-name">Google Analytics</div>
+          <div class="svc-status" id="ga-status-label">Not connected</div>
+          <span class="badge" id="ga-status-badge" style="background:rgba(239,68,68,.15);color:#f87171">Disconnected</span>
+        </div>
+        <div class="connect-card">
+          <div class="svc-icon">📢</div>
+          <div class="svc-name">Google Ads</div>
+          <div class="svc-status" id="ads-status-label">Not connected</div>
+          <span class="badge" id="ads-status-badge" style="background:rgba(239,68,68,.15);color:#f87171">Disconnected</span>
+        </div>
+      </div>
+
+      <!-- Step-by-step setup -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">Step 1 — Create a Google Cloud Project &amp; OAuth Client</div>
+        <div class="setup-steps" style="margin-top:4px">
+          <div class="setup-step">
+            <div class="step-body">
+              <strong>Go to Google Cloud Console</strong>
+              <p>Visit <a href="https://console.cloud.google.com" target="_blank" style="color:var(--lime)">console.cloud.google.com</a> → Create a new project called <code>TEL Dashboard</code>.</p>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="step-body">
+              <strong>Enable APIs</strong>
+              <p>In "APIs &amp; Services" → Library, enable: <code>Google Search Console API</code>, <code>Google Analytics Data API</code>, and <code>Google Ads API</code>.</p>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="step-body">
+              <strong>Create OAuth 2.0 Credentials</strong>
+              <p>APIs &amp; Services → Credentials → Create Credentials → OAuth Client ID. Application type: <code>Web application</code>. Under Authorized JavaScript origins add: <code>https://texaselectricandlight.com</code>. Under Authorized redirect URIs add: <code>https://texaselectricandlight.com/pages/dashboard.html</code></p>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="step-body">
+              <strong>Copy your Client ID below</strong>
+              <p>After creating, copy the Client ID (it looks like <code>123456789.apps.googleusercontent.com</code>).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Client ID entry -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">Step 2 — Enter Your Credentials</div>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+          <div class="cred-row">
+            <div class="field-wrap">
+              <label>Google OAuth Client ID</label>
+              <input type="text" id="clientIdInput" placeholder="123456789-xxxx.apps.googleusercontent.com" />
+            </div>
+          </div>
+          <div class="cred-row">
+            <div class="field-wrap">
+              <label>GA4 Property ID</label>
+              <input type="text" id="ga4PropInput" placeholder="properties/123456789" />
+            </div>
+          </div>
+          <div class="cred-row">
+            <div class="field-wrap">
+              <label>Search Console Site URL (exact match)</label>
+              <input type="text" id="scSiteInput" placeholder="https://texaselectricandlight.com/" value="https://texaselectricandlight.com/" />
+            </div>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="saveCredentials()">Save Credentials</button>
+            <span id="cred-saved" style="color:var(--lime);font-size:12px;margin-left:12px;display:none">✓ Saved to browser</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authorize -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">Step 3 — Authorize with Google</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Click below to open a Google sign-in popup. Sign in with the Google account that has access to Search Console, Analytics, and Ads for texaselectricandlight.com.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" id="authBtn" onclick="startOAuth()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.372 0 0 5.373 0 12s5.372 12 12 12 12-5.373 12-12S18.628 0 12 0zm6.804 16.444c-.252.438-.546.843-.877 1.209-.33.366-.698.688-1.097.965-.4.276-.826.496-1.275.657-.45.16-.918.24-1.404.24-.486 0-.954-.08-1.403-.24-.45-.16-.875-.38-1.275-.657-.4-.277-.768-.599-1.098-.965-.33-.366-.624-.77-.877-1.21L12 12l-6.804 4.444z"/></svg>
+            Sign in with Google
+          </button>
+          <button class="btn btn-ghost" id="revokeBtn" onclick="revokeAuth()" style="display:none">Disconnect</button>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted)" id="auth-user-info"></div>
+      </div>
+
+      <!-- Passphrase change -->
+      <div class="card">
+        <div class="card-title">Change Dashboard Passphrase</div>
+        <div class="cred-row" style="margin-top:4px">
+          <div class="field-wrap">
+            <label>New Passphrase</label>
+            <input type="password" id="newPassInput" placeholder="Enter new passphrase" />
+          </div>
+          <button class="btn btn-ghost" onclick="changePass()" style="flex-shrink:0">Update</button>
+        </div>
+        <div style="margin-top:8px;font-size:12px;color:var(--muted)">Stored locally in your browser only.</div>
+      </div>
+
+    </div><!-- /setup page -->
+
+  </main>
+</div><!-- /app -->
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════
+const DEFAULT_PASS = 'TELdashboard2026'; // Change on first login
+const SCOPES = [
+  'https://www.googleapis.com/auth/webmasters.readonly',
+  'https://www.googleapis.com/auth/analytics.readonly',
+  'openid email profile'
+].join(' ');
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let tokenClient = null;
+let accessToken = null;
+let clientId = '';
+let ga4Prop = '';
+let scSite = 'https://texaselectricandlight.com/';
+let currentGenTab = 'blog';
+let genOutputs = { blog: '', gbp: '', social: '' };
+
+// ══════════════════════════════════════════════
+//  LOCK SCREEN
+// ══════════════════════════════════════════════
+function checkPass() {
+  const val = document.getElementById('passInput').value.trim();
+  const stored = localStorage.getItem('tel_dash_pass') || DEFAULT_PASS;
+  if (val === stored) {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    init();
+  } else {
+    document.getElementById('lockErr').textContent = 'Incorrect passphrase. Try again.';
+    document.getElementById('passInput').value = '';
+  }
+}
+document.getElementById('passInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPass();
+});
+
+function changePass() {
+  const v = document.getElementById('newPassInput').value.trim();
+  if (!v || v.length < 6) return alert('Passphrase must be at least 6 characters.');
+  localStorage.setItem('tel_dash_pass', v);
+  document.getElementById('newPassInput').value = '';
+  alert('Passphrase updated. Use it next time you log in.');
+}
+
+// ══════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  return false;
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+function init() {
+  // Load saved credentials
+  clientId = localStorage.getItem('tel_client_id') || '';
+  ga4Prop = localStorage.getItem('tel_ga4_prop') || '';
+  scSite = localStorage.getItem('tel_sc_site') || 'https://texaselectricandlight.com/';
+  accessToken = localStorage.getItem('tel_access_token') || null;
+
+  if (clientId) document.getElementById('clientIdInput').value = clientId;
+  if (ga4Prop) document.getElementById('ga4PropInput').value = ga4Prop;
+  if (scSite) document.getElementById('scSiteInput').value = scSite;
+
+  // Load Google Identity Services
+  if (!document.getElementById('gis-script')) {
+    const s = document.createElement('script');
+    s.id = 'gis-script';
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = () => initTokenClient();
+    document.head.appendChild(s);
+  } else {
+    initTokenClient();
+  }
+
+  updateConnectionStatus();
+  updateOverviewDate();
+}
+
+function initTokenClient() {
+  if (!clientId || !window.google) return;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: clientId,
+    scope: SCOPES,
+    callback: handleTokenResponse
+  });
+}
+
+// ══════════════════════════════════════════════
+//  CREDENTIALS
+// ══════════════════════════════════════════════
+function saveCredentials() {
+  clientId = document.getElementById('clientIdInput').value.trim();
+  ga4Prop = document.getElementById('ga4PropInput').value.trim();
+  scSite = document.getElementById('scSiteInput').value.trim();
+  localStorage.setItem('tel_client_id', clientId);
+  localStorage.setItem('tel_ga4_prop', ga4Prop);
+  localStorage.setItem('tel_sc_site', scSite);
+  const saved = document.getElementById('cred-saved');
+  saved.style.display = 'inline';
+  setTimeout(() => saved.style.display = 'none', 2500);
+  initTokenClient();
+}
+
+// ══════════════════════════════════════════════
+//  OAUTH
+// ══════════════════════════════════════════════
+function startOAuth() {
+  if (!clientId) {
+    alert('Save your Google Client ID first (Step 2).');
+    return;
+  }
+  if (!window.google) {
+    alert('Google Identity Services still loading. Wait a moment and try again.');
+    return;
+  }
+  if (!tokenClient) initTokenClient();
+  tokenClient.requestAccessToken({ prompt: 'select_account' });
+}
+
+function handleTokenResponse(resp) {
+  if (resp.error) {
+    console.error('OAuth error:', resp);
+    return;
+  }
+  accessToken = resp.access_token;
+  localStorage.setItem('tel_access_token', accessToken);
+  updateConnectionStatus();
+  fetchUserInfo();
+  // Auto-load overview
+  loadOverview();
+}
+
+function fetchUserInfo() {
+  if (!accessToken) return;
+  fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  })
+  .then(r => r.json())
+  .then(data => {
+    const el = document.getElementById('auth-user-info');
+    if (data.email) el.textContent = `Signed in as: ${data.email}`;
+    document.getElementById('revokeBtn').style.display = 'inline-flex';
+    document.getElementById('authBtn').textContent = 'Re-authorize';
+  });
+}
+
+function revokeAuth() {
+  if (!accessToken) return;
+  google.accounts.oauth2.revoke(accessToken, () => {
+    accessToken = null;
+    localStorage.removeItem('tel_access_token');
+    document.getElementById('auth-user-info').textContent = '';
+    document.getElementById('revokeBtn').style.display = 'none';
+    document.getElementById('authBtn').textContent = 'Sign in with Google';
+    updateConnectionStatus();
+  });
+}
+
+function updateConnectionStatus() {
+  const connected = !!accessToken;
+
+  const setBadge = (id, labelId, text, color, textColor) => {
+    const b = document.getElementById(id);
+    const l = document.getElementById(labelId);
+    b.style.background = `rgba(${color},.15)`;
+    b.style.color = textColor;
+    b.textContent = text;
+    l.textContent = connected ? 'Token active' : 'Not connected';
+  };
+
+  if (connected) {
+    setBadge('sc-status-badge', 'sc-status-label', 'Connected', '16,185,129', '#34d399');
+    setBadge('ga-status-badge', 'ga-status-label', 'Connected', '16,185,129', '#34d399');
+    setBadge('ads-status-badge', 'ads-status-label', 'Partial setup', '245,158,11', '#fbbf24');
+    document.getElementById('overviewNotConnected').style.display = 'none';
+  } else {
+    setBadge('sc-status-badge', 'sc-status-label', 'Disconnected', '239,68,68', '#f87171');
+    setBadge('ga-status-badge', 'ga-status-label', 'Disconnected', '239,68,68', '#f87171');
+    setBadge('ads-status-badge', 'ads-status-label', 'Disconnected', '239,68,68', '#f87171');
+    document.getElementById('overviewNotConnected').style.display = 'block';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function fmt(n) {
+  if (n === undefined || n === null) return '—';
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n.toLocaleString();
+}
+
+function fmtPct(n) { return n ? (n * 100).toFixed(1) + '%' : '—'; }
+function fmtPos(n) { return n ? n.toFixed(1) : '—'; }
+function fmtSecs(s) {
+  if (!s) return '—';
+  const m = Math.floor(s / 60);
+  const sec = Math.round(s % 60);
+  return m > 0 ? `${m}m ${sec}s` : `${sec}s`;
+}
+
+function dateRange(days) {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(end.getDate() - days);
+  return {
+    startDate: start.toISOString().split('T')[0],
+    endDate: end.toISOString().split('T')[0]
+  };
+}
+
+function updateOverviewDate() {
+  const d = dateRange(28);
+  document.getElementById('overviewDateRange').textContent = `${d.startDate} → ${d.endDate} (last 28 days)`;
+}
+
+function requireAuth(cb) {
+  if (!accessToken) {
+    alert('Not connected. Go to Connect APIs and sign in with Google first.');
+    return;
+  }
+  cb();
+}
+
+function renderQueryTable(rows, containerId) {
+  if (!rows || !rows.length) {
+    document.getElementById(containerId).innerHTML = '<p style="color:var(--muted);font-size:13px">No data returned.</p>';
+    return;
+  }
+  const maxClicks = Math.max(...rows.map(r => r.clicks || 0), 1);
+  let html = `<table><thead><tr>
+    <th>Query</th><th>Clicks</th><th>Impr</th><th>Pos</th>
+  </tr></thead><tbody>`;
+  rows.slice(0, 10).forEach(r => {
+    const pct = Math.round((r.clicks / maxClicks) * 100);
+    html += `<tr>
+      <td>${r.keys ? r.keys[0] : r.query || '—'}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span>${fmt(r.clicks)}</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      </td>
+      <td class="muted">${fmt(r.impressions)}</td>
+      <td class="muted">${fmtPos(r.position)}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById(containerId).innerHTML = html;
+}
+
+function renderPageTable(rows, containerId, keyField, valField, valLabel) {
+  if (!rows || !rows.length) {
+    document.getElementById(containerId).innerHTML = '<p style="color:var(--muted);font-size:13px">No data returned.</p>';
+    return;
+  }
+  const maxVal = Math.max(...rows.map(r => parseFloat(r[valField] || r.metricValues?.[0]?.value || 0)), 1);
+  let html = `<table><thead><tr><th>Page</th><th>${valLabel}</th></tr></thead><tbody>`;
+  rows.slice(0, 10).forEach(r => {
+    const page = r.keys ? r.keys[0] : (r.dimensionValues?.[0]?.value || '—');
+    const val = parseFloat(r[valField] || r.metricValues?.[0]?.value || 0);
+    const pct = Math.round((val / maxVal) * 100);
+    const label = page.replace('https://texaselectricandlight.com', '').replace('/pages/', '/') || '/';
+    html += `<tr>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${page}">${label}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span>${fmt(val)}</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById(containerId).innerHTML = html;
+}
+
+// ══════════════════════════════════════════════
+//  SEARCH CONSOLE
+// ══════════════════════════════════════════════
+async function loadSearchConsole() {
+  requireAuth(async () => {
+    const days = parseInt(document.getElementById('scRange').value);
+    const { startDate, endDate } = dateRange(days);
+    const spin = document.getElementById('sc-spinner');
+    if (spin) spin.style.display = 'inline-block';
+
+    const body = { startDate, endDate, dimensions: ['query'], rowLimit: 25 };
+    const bodyPages = { startDate, endDate, dimensions: ['page'], rowLimit: 25 };
+    const siteUrl = encodeURIComponent(scSite);
+    const base = `https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/searchAnalytics/query`;
+    const headers = { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
+
+    try {
+      // Summary
+      const sumResp = await fetch(base, { method: 'POST', headers, body: JSON.stringify({ startDate, endDate, dimensions: [] }) });
+      const sumData = await sumResp.json();
+      if (sumData.rows && sumData.rows[0]) {
+        const r = sumData.rows[0];
+        document.getElementById('sc-clicks').textContent = fmt(r.clicks);
+        document.getElementById('sc-impressions').textContent = fmt(r.impressions);
+        document.getElementById('sc-ctr').textContent = fmtPct(r.ctr);
+        document.getElementById('sc-pos').textContent = fmtPos(r.position);
+      }
+
+      // Queries
+      const qResp = await fetch(base, { method: 'POST', headers, body: JSON.stringify(body) });
+      const qData = await qResp.json();
+      renderQueryTable(qData.rows, 'sc-queries');
+
+      // Pages
+      const pResp = await fetch(base, { method: 'POST', headers, body: JSON.stringify(bodyPages) });
+      const pData = await pResp.json();
+      renderPageTable(pData.rows, 'sc-pages', 'page', 'clicks', 'Clicks');
+
+      // Low CTR opportunities
+      if (qData.rows) {
+        const lowCTR = qData.rows
+          .filter(r => r.impressions > 50 && r.ctr < 0.05)
+          .sort((a, b) => b.impressions - a.impressions)
+          .slice(0, 8);
+        if (lowCTR.length) {
+          let html = `<table><thead><tr><th>Query</th><th>Impressions</th><th>CTR</th><th>Position</th><th>Opportunity</th></tr></thead><tbody>`;
+          lowCTR.forEach(r => {
+            html += `<tr>
+              <td>${r.keys[0]}</td>
+              <td>${fmt(r.impressions)}</td>
+              <td style="color:var(--danger)">${fmtPct(r.ctr)}</td>
+              <td>${fmtPos(r.position)}</td>
+              <td><span class="badge badge-lime">Improve title/meta</span></td>
+            </tr>`;
+          });
+          html += '</tbody></table>';
+          document.getElementById('sc-lowctr').innerHTML = html;
+        } else {
+          document.getElementById('sc-lowctr').innerHTML = '<p style="color:var(--muted);font-size:13px">No obvious low-CTR opportunities in this period. Good work.</p>';
+        }
+      }
+
+    } catch(e) {
+      console.error('SC error:', e);
+      document.getElementById('sc-queries').innerHTML = `<p style="color:var(--danger);font-size:13px">Error: ${e.message}. Check Client ID and try re-authorizing.</p>`;
+    } finally {
+      if (spin) spin.style.display = 'none';
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+//  ANALYTICS (GA4)
+// ══════════════════════════════════════════════
+async function loadAnalytics() {
+  requireAuth(async () => {
+    if (!ga4Prop) { alert('Set your GA4 Property ID in Connect APIs first.'); return; }
+    const days = document.getElementById('gaRange').value === '7days' ? 7
+                : document.getElementById('gaRange').value === '90daysAgo' ? 90 : 28;
+    const { startDate } = dateRange(days);
+    const endDate = new Date().toISOString().split('T')[0];
+    const headers = { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
+    const url = `https://analyticsdata.googleapis.com/v1beta/${ga4Prop}:runReport`;
+
+    try {
+      // Overall metrics
+      const sumBody = {
+        dateRanges: [{ startDate, endDate }],
+        metrics: [
+          { name: 'sessions' }, { name: 'activeUsers' },
+          { name: 'engagedSessions' }, { name: 'averageSessionDuration' }
+        ]
+      };
+      const sumResp = await fetch(url, { method: 'POST', headers, body: JSON.stringify(sumBody) });
+      const sumData = await sumResp.json();
+      if (sumData.rows && sumData.rows[0]) {
+        const vals = sumData.rows[0].metricValues;
+        document.getElementById('ga-sessions').textContent = fmt(parseInt(vals[0].value));
+        document.getElementById('ga-users').textContent = fmt(parseInt(vals[1].value));
+        document.getElementById('ga-engaged').textContent = fmt(parseInt(vals[2].value));
+        document.getElementById('ga-duration').textContent = fmtSecs(parseFloat(vals[3].value));
+      }
+
+      // Top pages
+      const pageBody = {
+        dateRanges: [{ startDate, endDate }],
+        dimensions: [{ name: 'pagePath' }],
+        metrics: [{ name: 'sessions' }],
+        orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+        limit: 10
+      };
+      const pageResp = await fetch(url, { method: 'POST', headers, body: JSON.stringify(pageBody) });
+      const pageData = await pageResp.json();
+      renderPageTable(pageData.rows || [], 'ga-pages', 'pagePath', 'sessions', 'Sessions');
+
+      // Channels
+      const chanBody = {
+        dateRanges: [{ startDate, endDate }],
+        dimensions: [{ name: 'sessionDefaultChannelGroup' }],
+        metrics: [{ name: 'sessions' }],
+        orderBys: [{ metric: { metricName: 'sessions' }, desc: true }]
+      };
+      const chanResp = await fetch(url, { method: 'POST', headers, body: JSON.stringify(chanBody) });
+      const chanData = await chanResp.json();
+      if (chanData.rows) {
+        const total = chanData.rows.reduce((s, r) => s + parseInt(r.metricValues[0].value), 0);
+        let html = '';
+        chanData.rows.forEach(r => {
+          const name = r.dimensionValues[0].value;
+          const val = parseInt(r.metricValues[0].value);
+          const pct = Math.round((val / total) * 100);
+          html += `<div class="metric-row">
+            <span class="metric-label">${name}</span>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="bar-wrap" style="width:80px"><div class="bar-fill" style="width:${pct}%"></div></div>
+              <span class="metric-val">${pct}%</span>
+            </div>
+          </div>`;
+        });
+        document.getElementById('ga-channels').innerHTML = html;
+      }
+
+    } catch(e) {
+      console.error('GA4 error:', e);
+      document.getElementById('ga-pages').innerHTML = `<p style="color:var(--danger);font-size:13px">Error: ${e.message}</p>`;
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+//  OVERVIEW (combined)
+// ══════════════════════════════════════════════
+async function loadOverview() {
+  if (!accessToken) {
+    document.getElementById('overviewNotConnected').style.display = 'block';
+    return;
+  }
+  document.getElementById('overviewNotConnected').style.display = 'none';
+
+  const { startDate, endDate } = dateRange(28);
+  const headers = { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
+
+  // Search Console summary
+  if (scSite) {
+    try {
+      const siteUrl = encodeURIComponent(scSite);
+      const base = `https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/searchAnalytics/query`;
+      const resp = await fetch(base, { method: 'POST', headers, body: JSON.stringify({ startDate, endDate, dimensions: [] }) });
+      const data = await resp.json();
+      if (data.rows && data.rows[0]) {
+        const r = data.rows[0];
+        document.getElementById('ov-clicks').textContent = fmt(r.clicks);
+        document.getElementById('ov-impressions').textContent = fmt(r.impressions);
+        document.getElementById('ov-position').textContent = fmtPos(r.position);
+      }
+
+      // Top queries for overview
+      const qResp = await fetch(base, { method: 'POST', headers, body: JSON.stringify({ startDate, endDate, dimensions: ['query'], rowLimit: 8 }) });
+      const qData = await qResp.json();
+      renderQueryTable(qData.rows, 'ov-queries-body');
+
+      // Content opportunities using Claude
+      if (qData.rows && qData.rows.length) {
+        generateOpportunities(qData.rows);
+      }
+    } catch(e) { console.warn('SC overview error:', e); }
+  }
+
+  // GA4 top pages for overview
+  if (ga4Prop) {
+    try {
+      const url = `https://analyticsdata.googleapis.com/v1beta/${ga4Prop}:runReport`;
+      const pageBody = {
+        dateRanges: [{ startDate, endDate }],
+        dimensions: [{ name: 'pagePath' }],
+        metrics: [{ name: 'sessions' }],
+        orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+        limit: 8
+      };
+      const resp = await fetch(url, { method: 'POST', headers, body: JSON.stringify(pageBody) });
+      const data = await resp.json();
+      renderPageTable(data.rows || [], 'ov-pages-body', 'pagePath', 'sessions', 'Sessions');
+    } catch(e) { console.warn('GA4 overview error:', e); }
+  }
+}
+
+async function generateOpportunities(queries) {
+  const topQ = queries.slice(0, 8).map(r => `"${r.keys[0]}" (${fmt(r.clicks)} clicks, pos ${fmtPos(r.position)})`).join(', ');
+  const prompt = `You are a content strategist for Texas Electric and Light (TECL), a licensed electrical contractor in Austin, TX (TECL #28315) serving Austin and surrounding areas.
+
+Based on these top Google search queries for their website: ${topQ}
+
+Suggest 3 specific content ideas they should create this week. For each:
+- Content type (blog post, GBP post, or social caption)
+- Exact title or hook
+- One sentence on why it will drive leads
+
+Keep it practical and Austin/Texas specific. Output as a plain numbered list, no headers, no markdown.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content?.find(c => c.type === 'text')?.text || 'Could not generate opportunities.';
+    document.getElementById('ov-opportunities').innerHTML = `<div style="font-size:13px;line-height:1.8;color:var(--text)">${text.replace(/\n/g, '<br>')}</div>`;
+  } catch(e) {
+    document.getElementById('ov-opportunities').innerHTML = '<p style="color:var(--muted);font-size:13px">Could not connect to content generator. Check network.</p>';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  CONTENT GENERATOR
+// ══════════════════════════════════════════════
+function showGenTab(tab, el) {
+  currentGenTab = tab;
+  document.querySelectorAll('.gen-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('gen-output-blog').style.display = tab === 'blog' ? 'block' : 'none';
+  document.getElementById('gen-output-gbp').style.display = tab === 'gbp' ? 'block' : 'none';
+  document.getElementById('gen-output-social').style.display = tab === 'social' ? 'block' : 'none';
+}
+
+async function generateContent() {
+  const type = document.getElementById('gen-type').value;
+  const topic = document.getElementById('gen-topic').value.trim() || 'electrical services';
+  const area = document.getElementById('gen-area').value.trim() || 'Austin, TX';
+  const context = document.getElementById('gen-context').value.trim();
+  const tone = document.getElementById('gen-tone').value;
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Generating…';
+
+  const toneDesc = tone === 'professional' ? 'professional, trustworthy, and authoritative'
+    : tone === 'friendly' ? 'friendly, approachable, and conversational'
+    : 'urgent and safety-focused';
+
+  const contextNote = context ? `\n\nData context from their analytics: ${context}` : '';
+
+  const prompts = {};
+
+  if (type === 'blog' || type === 'all') {
+    prompts.blog = `Write a complete blog post for Texas Electric and Light (TECL #28315), a licensed electrician in ${area}.
+
+Topic: ${topic}
+Tone: ${toneDesc}${contextNote}
+
+Format:
+- SEO title (include location keyword)
+- Meta description (155 chars max)
+- Full blog post (600-800 words)
+- Include: intro hook, 3-4 body sections with subheadings, CTA at end pointing to texaselectricandlight.com or call (512) 547-4130
+- Austin/Texas specific references where natural
+- Do NOT use markdown headers with #, use plain text with clear section labels`;
+  }
+
+  if (type === 'gbp' || type === 'all') {
+    prompts.gbp = `Write a Google Business Profile post for Texas Electric and Light (TECL #28315) in ${area}.
+
+Topic: ${topic}
+Tone: ${toneDesc}${contextNote}
+
+Requirements:
+- 150-300 words max
+- Start with a strong hook (question or bold statement)
+- Include a specific service detail relevant to ${area} homeowners or businesses
+- End with a clear CTA: call (512) 547-4130 or visit texaselectricandlight.com
+- No hashtags
+- Sound like a local pro, not corporate marketing copy`;
+  }
+
+  if (type === 'social' || type === 'all') {
+    prompts.social = `Write 3 social media captions for Texas Electric and Light (TECL #28315) in ${area}.
+
+Topic: ${topic}
+Tone: ${toneDesc}${contextNote}
+
+Requirements:
+- Caption 1: Facebook (200-250 words, educational/informative)
+- Caption 2: Instagram (125-175 words, visual hook, 3-5 relevant hashtags)
+- Caption 3: LinkedIn (150-200 words, professional angle for commercial clients)
+- Each ends with CTA: call (512) 547-4130 or texaselectricandlight.com
+- Label each clearly`;
+  }
+
+  // Show the right tab
+  if (type !== 'all') {
+    showGenTab(type, document.querySelector(`.gen-tab[onclick*="${type}"]`));
+  }
+
+  try {
+    const keys = Object.keys(prompts);
+    for (const key of keys) {
+      const el = document.getElementById(`gen-output-${key}`);
+      el.textContent = 'Generating…';
+      el.classList.remove('empty');
+
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompts[key] }]
+        })
+      });
+      const data = await resp.json();
+      const text = data.content?.find(c => c.type === 'text')?.text || 'Error generating content.';
+      genOutputs[key] = text;
+      el.textContent = text;
+    }
+    document.getElementById('gen-actions').style.display = 'flex';
+    // Switch to first generated tab
+    const firstKey = keys[0];
+    const tabEl = document.querySelector(`.gen-tab[onclick*="${firstKey}"]`);
+    if (tabEl) showGenTab(firstKey, tabEl);
+  } catch(e) {
+    document.getElementById('gen-output-blog').textContent = `Error: ${e.message}`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Generate';
+  }
+}
+
+function copyOutput() {
+  const el = document.getElementById(`gen-output-${currentGenTab}`);
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+</script>
+</body>
+</html>
