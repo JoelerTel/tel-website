@@ -37,7 +37,7 @@
 /* lock screen styles removed */
 
     /* ── APP SHELL ── */
-    #app { display: none; height: 100vh; overflow: hidden; flex-direction: row; }
+    #app { display: flex; height: 100vh; overflow: hidden; flex-direction: row; }
 
     /* ── SIDEBAR ── */
     aside {
@@ -744,18 +744,7 @@
         <div style="margin-top:12px;font-size:12px;color:var(--muted)" id="auth-user-info"></div>
       </div>
 
-      <!-- Passphrase change -->
-      <div class="card">
-        <div class="card-title">Change Dashboard Passphrase</div>
-        <div class="cred-row" style="margin-top:4px">
-          <div class="field-wrap">
-            <label>New Passphrase</label>
-            <input type="password" id="newPassInput" placeholder="Enter new passphrase" />
-          </div>
-          <button class="btn btn-ghost" onclick="changePass()" style="flex-shrink:0">Update</button>
-        </div>
-        <div style="margin-top:8px;font-size:12px;color:var(--muted)">Stored locally in your browser only.</div>
-      </div>
+<!-- passphrase card removed -->
 
     </div><!-- /setup page -->
 
@@ -766,7 +755,6 @@
 // ══════════════════════════════════════════════
 //  CONFIG
 // ══════════════════════════════════════════════
-const DEFAULT_PASS = 'TELdashboard2026'; // Change on first login
 const SCOPES = [
   'https://www.googleapis.com/auth/webmasters.readonly',
   'https://www.googleapis.com/auth/analytics.readonly',
