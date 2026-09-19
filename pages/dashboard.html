@@ -700,7 +700,7 @@
           <div class="cred-row">
             <div class="field-wrap">
               <label>Search Console Site URL (exact match)</label>
-              <input type="text" id="scSiteInput" placeholder="https://texaselectricandlight.com/" value="https://texaselectricandlight.com/" />
+              <input type="text" id="scSiteInput" placeholder="sc-domain:texaselectricandlight.com" value="sc-domain:texaselectricandlight.com" />
             </div>
           </div>
           <div>
@@ -760,7 +760,7 @@ let tokenClient = null;
 let accessToken = null;
 let clientId = '397046160179-bgel74vs4k24lo22n00gs24ng4ti5bhd.apps.googleusercontent.com';
 let ga4Prop = 'properties/448586344';
-let scSite = 'https://texaselectricandlight.com/';
+let scSite = 'sc-domain:texaselectricandlight.com';
 let currentGenTab = 'blog';
 let genOutputs = { blog: '', gbp: '', social: '' };
 
@@ -809,7 +809,8 @@ function init() {
   // Load saved credentials
   clientId = localStorage.getItem('tel_client_id') || '397046160179-bgel74vs4k24lo22n00gs24ng4ti5bhd.apps.googleusercontent.com';
   ga4Prop = localStorage.getItem('tel_ga4_prop') || 'properties/448586344';
-  scSite = localStorage.getItem('tel_sc_site') || 'https://texaselectricandlight.com/';
+  if (localStorage.getItem('tel_sc_site') === 'https://texaselectricandlight.com/') { localStorage.removeItem('tel_sc_site'); }
+  scSite = localStorage.getItem('tel_sc_site') || 'sc-domain:texaselectricandlight.com';
   accessToken = localStorage.getItem('tel_access_token') || null;
 
   if (clientId) document.getElementById('clientIdInput').value = clientId;
