@@ -688,13 +688,13 @@
           <div class="cred-row">
             <div class="field-wrap">
               <label>Google OAuth Client ID</label>
-              <input type="text" id="clientIdInput" placeholder="123456789-xxxx.apps.googleusercontent.com" />
+              <input type="text" id="clientIdInput" placeholder="123456789-xxxx.apps.googleusercontent.com" value="397046160179-bgel74vs4k24lo22n00gs24ng4ti5bhd.apps.googleusercontent.com" />
             </div>
           </div>
           <div class="cred-row">
             <div class="field-wrap">
               <label>GA4 Property ID</label>
-              <input type="text" id="ga4PropInput" placeholder="properties/123456789" />
+              <input type="text" id="ga4PropInput" placeholder="properties/123456789" value="properties/448586344" />
             </div>
           </div>
           <div class="cred-row">
@@ -758,8 +758,8 @@ const SCOPES = [
 // ══════════════════════════════════════════════
 let tokenClient = null;
 let accessToken = null;
-let clientId = '';
-let ga4Prop = '';
+let clientId = '397046160179-bgel74vs4k24lo22n00gs24ng4ti5bhd.apps.googleusercontent.com';
+let ga4Prop = 'properties/448586344';
 let scSite = 'https://texaselectricandlight.com/';
 let currentGenTab = 'blog';
 let genOutputs = { blog: '', gbp: '', social: '' };
@@ -807,8 +807,8 @@ function showPage(id, el) {
 // ══════════════════════════════════════════════
 function init() {
   // Load saved credentials
-  clientId = localStorage.getItem('tel_client_id') || '';
-  ga4Prop = localStorage.getItem('tel_ga4_prop') || '';
+  clientId = localStorage.getItem('tel_client_id') || '397046160179-bgel74vs4k24lo22n00gs24ng4ti5bhd.apps.googleusercontent.com';
+  ga4Prop = localStorage.getItem('tel_ga4_prop') || 'properties/448586344';
   scSite = localStorage.getItem('tel_sc_site') || 'https://texaselectricandlight.com/';
   accessToken = localStorage.getItem('tel_access_token') || null;
 
