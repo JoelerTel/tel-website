@@ -127,6 +127,13 @@
 
   <!-- Blog Posts - Home Improvement -->
   <url><loc>https://texaselectricandlight.com/pages/blog/panel-upgrade-planning-guide.html</loc><lastmod>2026-09-10</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
+    <url>
+        <loc>https://texaselectricandlight.com/pages/blog/when-does-austin-home-need-panel-upgrade.html</loc>
+        <lastmod>2026-09-22</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
   <url><loc>https://texaselectricandlight.com/pages/blog/ev-charger-installation-guide-austin.html</loc><lastmod>2026-09-10</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
   <url><loc>https://texaselectricandlight.com/pages/blog/smart-home-electrical-requirements.html</loc><lastmod>2026-09-10</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
   <url><loc>https://texaselectricandlight.com/pages/blog/energy-efficient-electrical-upgrades-austin.html</loc><lastmod>2026-09-10</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
