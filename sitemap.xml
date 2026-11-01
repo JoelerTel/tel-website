@@ -145,6 +145,12 @@
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
+    <url>
+        <loc>https://texaselectricandlight.com/pages/blog/holiday-christmas-lighting-electrical-safety-austin.html</loc>
+        <lastmod>2026-11-01</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.8</priority>
+    </url>
 
   <url><loc>https://texaselectricandlight.com/pages/blog/ev-charger-installation-guide-austin.html</loc><lastmod>2026-09-10</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
   <url><loc>https://texaselectricandlight.com/pages/blog/smart-home-electrical-requirements.html</loc><lastmod>2026-09-10</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
