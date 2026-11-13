@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You | Texas Electric and Light</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://www.texaselectricandlight.com/pages/thank-you.html" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/js/tracking.js" defer></script>
+    <style>
+        :root { --lime-green: #8BC34A; }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+    <script>
+        /* Fire generate_lead once on page load (redirected here after form success) */
+        window.addEventListener('load', function () {
+            var params = new URLSearchParams(location.search);
+            var service = params.get('service') || 'unknown';
+            if (typeof window.gtag === 'function') {
+                window.gtag('event', 'generate_lead', { service_type: service });
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Minimal header — logo + phone only, no nav menu -->
+    <header class="bg-white shadow-md py-4">
+        <div class="max-w-4xl mx-auto px-4 flex items-center justify-between">
+            <a href="/">
+                <img src="/assets/images/logos/Logo.png" alt="Texas Electric and Light" class="h-10 w-auto">
+            </a>
+            <a href="tel:+15125474130" class="bg-lime-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-lime-600 transition-colors text-sm">
+                (512) 547-4130
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center px-4 py-16">
+        <div class="max-w-lg text-center">
+            <div class="w-16 h-16 bg-lime-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-8 h-8 text-lime-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">We received your request!</h1>
+            <p class="text-lg text-gray-600 mb-6">
+                Thank you for reaching out to Texas Electric and Light. We'll review your project details and get back to you to schedule a free on-site estimate.
+            </p>
+            <p class="text-gray-500 mb-8">
+                Our office hours are <strong>Monday–Friday, 8am–5pm</strong>. If you have an urgent question, give us a call at <a href="tel:+15125474130" class="text-lime-600 font-semibold">(512) 547-4130</a>.
+            </p>
+            <a href="/" class="inline-block bg-gray-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+                Back to Home
+            </a>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 text-center py-4 text-sm">
+        <p>&copy; <script>document.write(new Date().getFullYear())</script> Texas Electric and Light LLC. TECL #28315.</p>
+    </footer>
+
+</body>
+</html>
