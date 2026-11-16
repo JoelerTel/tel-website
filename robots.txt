@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow utility/internal pages
+Disallow: /pages/dashboard.html
+Disallow: /pages/footer.html
+Disallow: /pages/leadform.html
+Disallow: /pages/Archive/
+Disallow: /Archive/
+
+Sitemap: https://www.texaselectricandlight.com/sitemap.xml
