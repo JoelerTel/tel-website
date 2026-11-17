@@ -39,11 +39,7 @@
       page_path: location.pathname,
       phone_number: el.getAttribute('href')
     });
-    /* Ads conversion */
-    window.gtag('event', 'conversion', {
-      send_to: 'AW-11469859729/bgd_CPXfgKYaEJHXoN0q',
-      value: 1.0,
-      currency: 'USD'
-    });
+    /* NOTE: Direct Ads conversion label bgd_CPXfgKYaEJHXoN0q removed per Nov 2026 audit.
+       phone_click GA4 event is retained above. Re-add conversion here if re-approved. */
   });
 })();
