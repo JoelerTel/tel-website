@@ -1,818 +1,818 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TEL Dashboard</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --lime: #BFC921; --lime-dim: #9ba81a;
-      --bg: #111827; --surface: #1f2937; --surface2: #374151;
-      --border: #374151; --text: #f9fafb; --muted: #9ca3af;
-      --danger: #ef4444; --amber: #f59e0b; --green: #10b981;
-    }
-    body { font-family: 'Raleway', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.5; }
-    #app { display: flex; height: 100vh; overflow: hidden; }
-    aside { width: 220px; min-width: 220px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; overflow-y: auto; }
-    .sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
-    .sidebar-logo .company { font-size: 13px; font-weight: 700; color: var(--lime); letter-spacing: .06em; }
-    .sidebar-logo .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    nav a { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; border-left: 2px solid transparent; transition: color .12s, border-color .12s, background .12s; cursor: pointer; }
-    nav a:hover { color: var(--text); background: rgba(255,255,255,.03); }
-    nav a.active { color: var(--lime); border-left-color: var(--lime); background: rgba(191,201,33,.06); }
-    nav a svg { width: 15px; height: 15px; flex-shrink: 0; }
-    .sidebar-section-label { font-size: 10px; letter-spacing: .1em; color: var(--surface2); text-transform: uppercase; padding: 16px 20px 6px; font-weight: 600; }
-    .sidebar-footer { margin-top: auto; padding: 16px 20px 0; border-top: 1px solid var(--border); }
-    .sidebar-footer .who { font-size: 12px; color: var(--muted); }
-    .sidebar-footer .who strong { color: var(--text); display: block; }
-    main { flex: 1; overflow-y: auto; padding: 32px 36px; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .page-header { margin-bottom: 28px; }
-    .page-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-    .page-header p { font-size: 13px; color: var(--muted); }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
-    .card-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 16px; }
-    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 20px 16px; }
-    .stat-tile .label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 10px; }
-    .stat-tile .value { font-size: 28px; font-weight: 700; color: var(--lime); line-height: 1; }
-    .stat-tile .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    thead th { text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding: 0 0 10px; border-bottom: 1px solid var(--border); }
-    tbody tr { border-bottom: 1px solid rgba(55,65,81,.5); }
-    tbody tr:last-child { border-bottom: none; }
-    tbody td { padding: 10px 0; color: var(--text); vertical-align: middle; }
-    tbody td.muted { color: var(--muted); }
-    .bar-wrap { width: 100px; background: var(--bg); border-radius: 2px; height: 4px; display:inline-block; }
-    .bar-fill { height: 4px; border-radius: 2px; background: var(--lime); }
-    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 6px; border: none; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
-    .btn-primary { background: var(--lime); color: #111; }
-    .btn-primary:hover { background: var(--lime-dim); }
-    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-    .btn-ghost:hover { color: var(--text); }
-    .btn-sm { padding: 6px 12px; font-size: 12px; }
-    .btn:disabled { opacity: .45; cursor: not-allowed; }
-    .notice { background: rgba(191,201,33,.08); border: 1px solid rgba(191,201,33,.2); border-radius: 6px; padding: 12px 16px; font-size: 13px; color: var(--lime); margin-bottom: 20px; }
-    .notice a { color: var(--lime); }
-    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(191,201,33,.3); border-top-color: var(--lime); border-radius: 50%; animation: spin .7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .gen-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-    .gen-tab { padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .12s, border-color .12s; }
-    .gen-tab.active { color: var(--lime); border-bottom-color: var(--lime); }
-    .gen-output { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 20px; white-space: pre-wrap; font-size: 13px; line-height: 1.7; color: var(--text); min-height: 120px; }
-    .gen-output.empty { color: var(--muted); font-style: italic; }
-    .gen-form label { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; }
-    .gen-form select, .gen-form input, .gen-form textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 6px; font-family: inherit; font-size: 13px; outline: none; margin-bottom: 14px; }
-    .gen-form textarea { min-height: 80px; resize: vertical; }
-    .date-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
-    .date-controls select { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 6px; font-family: inherit; font-size: 13px; outline: none; }
-    .connect-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
-    .connect-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
-    .connect-card .svc-icon { font-size: 28px; margin-bottom: 10px; }
-    .connect-card .svc-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-    .connect-card .svc-status { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-    .field-wrap label { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; }
-    .field-wrap input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 6px; font-family: inherit; font-size: 13px; outline: none; margin-bottom: 14px; }
-    .field-wrap input:focus { border-color: var(--lime); }
-    .setup-steps { display: flex; flex-direction: column; gap: 16px; counter-reset: step; }
-    .setup-step { counter-increment: step; display: flex; gap: 16px; }
-    .setup-step::before { content: counter(step); width: 24px; height: 24px; min-width: 24px; background: var(--lime); color: #111; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-top: 1px; }
-    .setup-step strong { display: block; font-size: 13px; margin-bottom: 4px; }
-    .setup-step p { font-size: 12px; color: var(--muted); line-height: 1.6; }
-    .setup-step code { background: var(--bg); padding: 2px 6px; border-radius: 3px; font-size: 11px; color: var(--lime); }
-    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(55,65,81,.5); }
-    .metric-row:last-child { border-bottom: none; }
-    .metric-row .metric-label { font-size: 13px; color: var(--muted); }
-    .metric-row .metric-val { font-size: 14px; font-weight: 600; }
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    @media (max-width: 900px) { .stat-grid { grid-template-columns: 1fr 1fr; } .two-col, .connect-grid { grid-template-columns: 1fr; } }
-  </style>
-    <!-- TEL Tracking (production-only: GA4 G-SPC4SZL39E, Ads AW-11469859729, Hotjar 5349272) -->
-    <script src="/assets/js/tracking.js" defer></script>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>TEL Dashboard</title>
+ <meta name="robots" content="noindex, nofollow" />
+ <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+ <style>
+ *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ :root {
+ --lime: #BFC921; --lime-dim: #9ba81a;
+ --bg: #111827; --surface: #1f2937; --surface2: #374151;
+ --border: #374151; --text: #f9fafb; --muted: #9ca3af;
+ --danger: #ef4444; --amber: #f59e0b; --green: #10b981;
+ }
+ body { font-family: 'Raleway', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.5; }
+ #app { display: flex; height: 100vh; overflow: hidden; }
+ aside { width: 220px; min-width: 220px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; overflow-y: auto; }
+ .sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+ .sidebar-logo .company { font-size: 13px; font-weight: 700; color: var(--lime); letter-spacing: .06em; }
+ .sidebar-logo .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+ nav a { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; border-left: 2px solid transparent; transition: color .12s, border-color .12s, background .12s; cursor: pointer; }
+ nav a:hover { color: var(--text); background: rgba(255,255,255,.03); }
+ nav a.active { color: var(--lime); border-left-color: var(--lime); background: rgba(191,201,33,.06); }
+ nav a svg { width: 15px; height: 15px; flex-shrink: 0; }
+ .sidebar-section-label { font-size: 10px; letter-spacing: .1em; color: var(--surface2); text-transform: uppercase; padding: 16px 20px 6px; font-weight: 600; }
+ .sidebar-footer { margin-top: auto; padding: 16px 20px 0; border-top: 1px solid var(--border); }
+ .sidebar-footer .who { font-size: 12px; color: var(--muted); }
+ .sidebar-footer .who strong { color: var(--text); display: block; }
+ main { flex: 1; overflow-y: auto; padding: 32px 36px; }
+ .page { display: none; }
+ .page.active { display: block; }
+ .page-header { margin-bottom: 28px; }
+ .page-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+ .page-header p { font-size: 13px; color: var(--muted); }
+ .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+ .card-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 16px; }
+ .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+ .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+ .stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 20px 16px; }
+ .stat-tile .label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 10px; }
+ .stat-tile .value { font-size: 28px; font-weight: 700; color: var(--lime); line-height: 1; }
+ .stat-tile .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+ table { width: 100%; border-collapse: collapse; font-size: 13px; }
+ thead th { text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding: 0 0 10px; border-bottom: 1px solid var(--border); }
+ tbody tr { border-bottom: 1px solid rgba(55,65,81,.5); }
+ tbody tr:last-child { border-bottom: none; }
+ tbody td { padding: 10px 0; color: var(--text); vertical-align: middle; }
+ tbody td.muted { color: var(--muted); }
+ .bar-wrap { width: 100px; background: var(--bg); border-radius: 2px; height: 4px; display:inline-block; }
+ .bar-fill { height: 4px; border-radius: 2px; background: var(--lime); }
+ .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 6px; border: none; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
+ .btn-primary { background: var(--lime); color: #111; }
+ .btn-primary:hover { background: var(--lime-dim); }
+ .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+ .btn-ghost:hover { color: var(--text); }
+ .btn-sm { padding: 6px 12px; font-size: 12px; }
+ .btn:disabled { opacity: .45; cursor: not-allowed; }
+ .notice { background: rgba(191,201,33,.08); border: 1px solid rgba(191,201,33,.2); border-radius: 6px; padding: 12px 16px; font-size: 13px; color: var(--lime); margin-bottom: 20px; }
+ .notice a { color: var(--lime); }
+ .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(191,201,33,.3); border-top-color: var(--lime); border-radius: 50%; animation: spin .7s linear infinite; }
+ @keyframes spin { to { transform: rotate(360deg); } }
+ .gen-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+ .gen-tab { padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .12s, border-color .12s; }
+ .gen-tab.active { color: var(--lime); border-bottom-color: var(--lime); }
+ .gen-output { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 20px; white-space: pre-wrap; font-size: 13px; line-height: 1.7; color: var(--text); min-height: 120px; }
+ .gen-output.empty { color: var(--muted); font-style: italic; }
+ .gen-form label { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; }
+ .gen-form select, .gen-form input, .gen-form textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 6px; font-family: inherit; font-size: 13px; outline: none; margin-bottom: 14px; }
+ .gen-form textarea { min-height: 80px; resize: vertical; }
+ .date-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+ .date-controls select { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 6px; font-family: inherit; font-size: 13px; outline: none; }
+ .connect-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+ .connect-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+ .connect-card .svc-icon { font-size: 28px; margin-bottom: 10px; }
+ .connect-card .svc-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+ .connect-card .svc-status { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+ .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+ .field-wrap label { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; }
+ .field-wrap input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 6px; font-family: inherit; font-size: 13px; outline: none; margin-bottom: 14px; }
+ .field-wrap input:focus { border-color: var(--lime); }
+ .setup-steps { display: flex; flex-direction: column; gap: 16px; counter-reset: step; }
+ .setup-step { counter-increment: step; display: flex; gap: 16px; }
+ .setup-step::before { content: counter(step); width: 24px; height: 24px; min-width: 24px; background: var(--lime); color: #111; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-top: 1px; }
+ .setup-step strong { display: block; font-size: 13px; margin-bottom: 4px; }
+ .setup-step p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+ .setup-step code { background: var(--bg); padding: 2px 6px; border-radius: 3px; font-size: 11px; color: var(--lime); }
+ .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(55,65,81,.5); }
+ .metric-row:last-child { border-bottom: none; }
+ .metric-row .metric-label { font-size: 13px; color: var(--muted); }
+ .metric-row .metric-val { font-size: 14px; font-weight: 600; }
+ ::-webkit-scrollbar { width: 5px; }
+ ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+ @media (max-width: 900px) { .stat-grid { grid-template-columns: 1fr 1fr; } .two-col, .connect-grid { grid-template-columns: 1fr; } }
+ </style>
+ <!-- TEL Tracking (production-only: GA4 G-SPC4SZL39E, Ads AW-11469859729, Hotjar 5349272) -->
+ <script src="/assets/js/tracking.js" defer></script>
 </head>
 <body>
 <div id="app">
 
-  <!-- SIDEBAR -->
-  <aside>
-    <div class="sidebar-logo">
-      <div class="company">TEL Dashboard</div>
-      <div class="sub">texaselectricandlight.com</div>
-    </div>
-    <nav>
-      <div class="sidebar-section-label">Overview</div>
-      <a class="active" onclick="showPage('overview',this)">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Overview
-      </a>
-      <div class="sidebar-section-label">Data Sources</div>
-      <a onclick="showPage('search',this)">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        Search Console
-      </a>
-      <a onclick="showPage('analytics',this)">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Analytics
-      </a>
-      <a onclick="showPage('ads',this)">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        Google Ads
-      </a>
-      <a onclick="showPage('indexing',this)">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-        Indexing
-      </a>
-      <div class="sidebar-section-label">Content</div>
-      <a onclick="showPage('generate',this)">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        Generate Content
-      </a>
-      <div class="sidebar-section-label">Settings</div>
-      <a onclick="showPage('setup',this)">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-        Connect APIs
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="who"><strong>Joel Neland</strong>TECL #28315</div>
-    </div>
-  </aside>
+ <!-- SIDEBAR -->
+ <aside>
+ <div class="sidebar-logo">
+ <div class="company">TEL Dashboard</div>
+ <div class="sub">texaselectricandlight.com</div>
+ </div>
+ <nav>
+ <div class="sidebar-section-label">Overview</div>
+ <a class="active" onclick="showPage('overview',this)">
+ <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+ Overview
+ </a>
+ <div class="sidebar-section-label">Data Sources</div>
+ <a onclick="showPage('search',this)">
+ <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+ Search Console
+ </a>
+ <a onclick="showPage('analytics',this)">
+ <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+ Analytics
+ </a>
+ <a onclick="showPage('ads',this)">
+ <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+ Google Ads
+ </a>
+ <a onclick="showPage('indexing',this)">
+ <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+ Indexing
+ </a>
+ <div class="sidebar-section-label">Content</div>
+ <a onclick="showPage('generate',this)">
+ <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+ Generate Content
+ </a>
+ <div class="sidebar-section-label">Settings</div>
+ <a onclick="showPage('setup',this)">
+ <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+ Connect APIs
+ </a>
+ </nav>
+ <div class="sidebar-footer">
+ <div class="who"><strong>Joel Neland</strong>TECL #28315</div>
+ </div>
+ </aside>
 
-  <!-- MAIN -->
-  <main>
+ <!-- MAIN -->
+ <main>
 
-    <!-- OVERVIEW -->
-    <div class="page active" id="page-overview">
-      <div class="page-header">
-        <h2>Weekly Overview</h2>
-        <p id="ovDateRange">Last 28 days</p>
-      </div>
-      <div id="ovNotConnected" class="notice" style="display:none">
-        ⚡ Not connected. Go to <strong onclick="showPage('setup',document.querySelector('nav a:last-of-type'))" style="cursor:pointer;text-decoration:underline">Connect APIs</strong> and sign in with Google first.
-      </div>
-      <div class="stat-grid">
-        <div class="stat-tile"><div class="label">Organic Clicks</div><div class="value" id="ov-clicks">—</div><div class="sub">Last 28 days</div></div>
-        <div class="stat-tile"><div class="label">Impressions</div><div class="value" id="ov-impressions">—</div><div class="sub">Last 28 days</div></div>
-        <div class="stat-tile"><div class="label">Avg. Position</div><div class="value" id="ov-position">—</div><div class="sub">Search Console</div></div>
-        <div class="stat-tile"><div class="label">Sessions</div><div class="value" id="ov-sessions">—</div><div class="sub">Google Analytics</div></div>
-      </div>
-      <div class="two-col">
-        <div class="card">
-          <div class="card-title">Top Queries</div>
-          <div id="ov-queries"><p style="color:var(--muted);font-size:13px">Hit Refresh Data to load.</p></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Top Landing Pages</div>
-          <div id="ov-pages"><p style="color:var(--muted);font-size:13px">Hit Refresh Data to load.</p></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Content Opportunities — AI Generated from Your Data</div>
-        <div id="ov-opps"><p style="color:var(--muted);font-size:13px">Hit Refresh Data to generate opportunities.</p></div>
-        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" onclick="loadOverview()">↻ Refresh Data</button>
-          <button class="btn btn-ghost btn-sm" id="exportBtn" onclick="exportToClaude()" style="display:none">⬡ Export to Claude</button>
-          <span id="exportConfirm" style="color:var(--lime);font-size:12px;display:none">✓ Copied! Paste into Claude.</span>
-        </div>
-      </div>
-    </div>
+ <!-- OVERVIEW -->
+ <div class="page active" id="page-overview">
+ <div class="page-header">
+ <h2>Weekly Overview</h2>
+ <p id="ovDateRange">Last 28 days</p>
+ </div>
+ <div id="ovNotConnected" class="notice" style="display:none">
+ ⚡ Not connected. Go to <strong onclick="showPage('setup',document.querySelector('nav a:last-of-type'))" style="cursor:pointer;text-decoration:underline">Connect APIs</strong> and sign in with Google first.
+ </div>
+ <div class="stat-grid">
+ <div class="stat-tile"><div class="label">Organic Clicks</div><div class="value" id="ov-clicks">—</div><div class="sub">Last 28 days</div></div>
+ <div class="stat-tile"><div class="label">Impressions</div><div class="value" id="ov-impressions">—</div><div class="sub">Last 28 days</div></div>
+ <div class="stat-tile"><div class="label">Avg. Position</div><div class="value" id="ov-position">—</div><div class="sub">Search Console</div></div>
+ <div class="stat-tile"><div class="label">Sessions</div><div class="value" id="ov-sessions">—</div><div class="sub">Google Analytics</div></div>
+ </div>
+ <div class="two-col">
+ <div class="card">
+ <div class="card-title">Top Queries</div>
+ <div id="ov-queries"><p style="color:var(--muted);font-size:13px">Hit Refresh Data to load.</p></div>
+ </div>
+ <div class="card">
+ <div class="card-title">Top Landing Pages</div>
+ <div id="ov-pages"><p style="color:var(--muted);font-size:13px">Hit Refresh Data to load.</p></div>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-title">Content Opportunities — AI Generated from Your Data</div>
+ <div id="ov-opps"><p style="color:var(--muted);font-size:13px">Hit Refresh Data to generate opportunities.</p></div>
+ <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+ <button class="btn btn-primary btn-sm" onclick="loadOverview()">↻ Refresh Data</button>
+ <button class="btn btn-ghost btn-sm" id="exportBtn" onclick="exportToClaude()" style="display:none">⬡ Export to Claude</button>
+ <span id="exportConfirm" style="color:var(--lime);font-size:12px;display:none">✓ Copied! Paste into Claude.</span>
+ </div>
+ </div>
+ </div>
 
-    <!-- SEARCH CONSOLE -->
-    <div class="page" id="page-search">
-      <div class="page-header"><h2>Search Console</h2><p>Organic search performance</p></div>
-      <div class="date-controls">
-        <select id="scRange">
-          <option value="7">Last 7 days</option>
-          <option value="28" selected>Last 28 days</option>
-          <option value="90">Last 90 days</option>
-        </select>
-        <button class="btn btn-primary btn-sm" onclick="loadSearchConsole()">Load</button>
-      </div>
-      <div class="stat-grid">
-        <div class="stat-tile"><div class="label">Clicks</div><div class="value" id="sc-clicks">—</div></div>
-        <div class="stat-tile"><div class="label">Impressions</div><div class="value" id="sc-impressions">—</div></div>
-        <div class="stat-tile"><div class="label">Avg CTR</div><div class="value" id="sc-ctr">—</div></div>
-        <div class="stat-tile"><div class="label">Avg Position</div><div class="value" id="sc-pos">—</div></div>
-      </div>
-      <div class="two-col">
-        <div class="card"><div class="card-title">Top Queries</div><div id="sc-queries"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
-        <div class="card"><div class="card-title">Top Pages</div><div id="sc-pages"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
-      </div>
-      <div class="card"><div class="card-title">Low CTR Opportunities</div><div id="sc-lowctr"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
-    </div>
+ <!-- SEARCH CONSOLE -->
+ <div class="page" id="page-search">
+ <div class="page-header"><h2>Search Console</h2><p>Organic search performance</p></div>
+ <div class="date-controls">
+ <select id="scRange">
+ <option value="7">Last 7 days</option>
+ <option value="28" selected>Last 28 days</option>
+ <option value="90">Last 90 days</option>
+ </select>
+ <button class="btn btn-primary btn-sm" onclick="loadSearchConsole()">Load</button>
+ </div>
+ <div class="stat-grid">
+ <div class="stat-tile"><div class="label">Clicks</div><div class="value" id="sc-clicks">—</div></div>
+ <div class="stat-tile"><div class="label">Impressions</div><div class="value" id="sc-impressions">—</div></div>
+ <div class="stat-tile"><div class="label">Avg CTR</div><div class="value" id="sc-ctr">—</div></div>
+ <div class="stat-tile"><div class="label">Avg Position</div><div class="value" id="sc-pos">—</div></div>
+ </div>
+ <div class="two-col">
+ <div class="card"><div class="card-title">Top Queries</div><div id="sc-queries"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
+ <div class="card"><div class="card-title">Top Pages</div><div id="sc-pages"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
+ </div>
+ <div class="card"><div class="card-title">Low CTR Opportunities</div><div id="sc-lowctr"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
+ </div>
 
-    <!-- ANALYTICS -->
-    <div class="page" id="page-analytics">
-      <div class="page-header"><h2>Google Analytics</h2><p>Traffic and engagement</p></div>
-      <div class="date-controls">
-        <select id="gaRange">
-          <option value="7">Last 7 days</option>
-          <option value="28" selected>Last 28 days</option>
-          <option value="90">Last 90 days</option>
-        </select>
-        <button class="btn btn-primary btn-sm" onclick="loadAnalytics()">Load</button>
-      </div>
-      <div class="stat-grid">
-        <div class="stat-tile"><div class="label">Sessions</div><div class="value" id="ga-sessions">—</div></div>
-        <div class="stat-tile"><div class="label">Users</div><div class="value" id="ga-users">—</div></div>
-        <div class="stat-tile"><div class="label">Engaged Sessions</div><div class="value" id="ga-engaged">—</div></div>
-        <div class="stat-tile"><div class="label">Avg Duration</div><div class="value" id="ga-duration">—</div></div>
-      </div>
-      <div class="two-col">
-        <div class="card"><div class="card-title">Top Pages</div><div id="ga-pages"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
-        <div class="card"><div class="card-title">Traffic by Channel</div><div id="ga-channels"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
-      </div>
-    </div>
+ <!-- ANALYTICS -->
+ <div class="page" id="page-analytics">
+ <div class="page-header"><h2>Google Analytics</h2><p>Traffic and engagement</p></div>
+ <div class="date-controls">
+ <select id="gaRange">
+ <option value="7">Last 7 days</option>
+ <option value="28" selected>Last 28 days</option>
+ <option value="90">Last 90 days</option>
+ </select>
+ <button class="btn btn-primary btn-sm" onclick="loadAnalytics()">Load</button>
+ </div>
+ <div class="stat-grid">
+ <div class="stat-tile"><div class="label">Sessions</div><div class="value" id="ga-sessions">—</div></div>
+ <div class="stat-tile"><div class="label">Users</div><div class="value" id="ga-users">—</div></div>
+ <div class="stat-tile"><div class="label">Engaged Sessions</div><div class="value" id="ga-engaged">—</div></div>
+ <div class="stat-tile"><div class="label">Avg Duration</div><div class="value" id="ga-duration">—</div></div>
+ </div>
+ <div class="two-col">
+ <div class="card"><div class="card-title">Top Pages</div><div id="ga-pages"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
+ <div class="card"><div class="card-title">Traffic by Channel</div><div id="ga-channels"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
+ </div>
+ </div>
 
-    <!-- ADS -->
-    <div class="page" id="page-ads">
-      <div class="page-header"><h2>Google Ads</h2><p>Campaign performance</p></div>
-      <div class="notice">Google Ads requires a Developer Token — see Connect APIs for setup instructions.</div>
-      <div class="stat-grid">
-        <div class="stat-tile"><div class="label">Total Spend</div><div class="value" id="ads-spend">—</div></div>
-        <div class="stat-tile"><div class="label">Conversions</div><div class="value" id="ads-conv">—</div></div>
-        <div class="stat-tile"><div class="label">Cost / Conv.</div><div class="value" id="ads-cpa">—</div></div>
-        <div class="stat-tile"><div class="label">Impressions</div><div class="value" id="ads-imp">—</div></div>
-      </div>
-      <div class="card"><div class="card-title">Campaigns</div><p style="color:var(--muted);font-size:13px">Connect Google Ads to see campaigns.</p></div>
-    </div>
+ <!-- ADS -->
+ <div class="page" id="page-ads">
+ <div class="page-header"><h2>Google Ads</h2><p>Campaign performance</p></div>
+ <div class="notice">Google Ads requires a Developer Token — see Connect APIs for setup instructions.</div>
+ <div class="stat-grid">
+ <div class="stat-tile"><div class="label">Total Spend</div><div class="value" id="ads-spend">—</div></div>
+ <div class="stat-tile"><div class="label">Conversions</div><div class="value" id="ads-conv">—</div></div>
+ <div class="stat-tile"><div class="label">Cost / Conv.</div><div class="value" id="ads-cpa">—</div></div>
+ <div class="stat-tile"><div class="label">Impressions</div><div class="value" id="ads-imp">—</div></div>
+ </div>
+ <div class="card"><div class="card-title">Campaigns</div><p style="color:var(--muted);font-size:13px">Connect Google Ads to see campaigns.</p></div>
+ </div>
 
-    <!-- INDEXING -->
-    <div class="page" id="page-indexing">
-      <div class="page-header"><h2>Indexing</h2><p>Which pages Google has indexed and why it may be skipping others.</p></div>
-      <div style="margin-bottom:20px">
-        <button class="btn btn-primary btn-sm" onclick="loadIndexing()"><span id="idx-spinner" style="display:none" class="spinner"></span> Load Indexing Data</button>
-      </div>
-      <div class="stat-grid">
-        <div class="stat-tile"><div class="label">In Search Results</div><div class="value" style="color:var(--green)" id="idx-indexed">—</div><div class="sub">Pages with impressions</div></div>
-        <div class="stat-tile"><div class="label">Sitemap Submitted</div><div class="value" id="idx-sitemap-count">—</div><div class="sub">URLs in sitemap</div></div>
-        <div class="stat-tile"><div class="label">Sitemap Indexed</div><div class="value" id="idx-sitemap-indexed">—</div><div class="sub">Confirmed by Google</div></div>
-        <div class="stat-tile"><div class="label">Issues Found</div><div class="value" style="color:var(--amber)" id="idx-issues">—</div><div class="sub">Needs attention</div></div>
-      </div>
-      <div class="two-col">
-        <div class="card"><div class="card-title">Sitemap Status</div><div id="idx-sitemaps"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
-        <div class="card"><div class="card-title">Pages Appearing in Search</div><div id="idx-pages" style="max-height:320px;overflow-y:auto"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
-      </div>
-      <div class="card"><div class="card-title">AI Analysis — What This Means for TEL</div><div id="idx-analysis"><p style="color:var(--muted);font-size:13px">Load data first.</p></div></div>
-    </div>
+ <!-- INDEXING -->
+ <div class="page" id="page-indexing">
+ <div class="page-header"><h2>Indexing</h2><p>Which pages Google has indexed and why it may be skipping others.</p></div>
+ <div style="margin-bottom:20px">
+ <button class="btn btn-primary btn-sm" onclick="loadIndexing()"><span id="idx-spinner" style="display:none" class="spinner"></span> Load Indexing Data</button>
+ </div>
+ <div class="stat-grid">
+ <div class="stat-tile"><div class="label">In Search Results</div><div class="value" style="color:var(--green)" id="idx-indexed">—</div><div class="sub">Pages with impressions</div></div>
+ <div class="stat-tile"><div class="label">Sitemap Submitted</div><div class="value" id="idx-sitemap-count">—</div><div class="sub">URLs in sitemap</div></div>
+ <div class="stat-tile"><div class="label">Sitemap Indexed</div><div class="value" id="idx-sitemap-indexed">—</div><div class="sub">Confirmed by Google</div></div>
+ <div class="stat-tile"><div class="label">Issues Found</div><div class="value" style="color:var(--amber)" id="idx-issues">—</div><div class="sub">Needs attention</div></div>
+ </div>
+ <div class="two-col">
+ <div class="card"><div class="card-title">Sitemap Status</div><div id="idx-sitemaps"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
+ <div class="card"><div class="card-title">Pages Appearing in Search</div><div id="idx-pages" style="max-height:320px;overflow-y:auto"><p style="color:var(--muted);font-size:13px">Hit Load.</p></div></div>
+ </div>
+ <div class="card"><div class="card-title">AI Analysis — What This Means for TEL</div><div id="idx-analysis"><p style="color:var(--muted);font-size:13px">Load data first.</p></div></div>
+ </div>
 
-    <!-- GENERATE -->
-    <div class="page" id="page-generate">
-      <div class="page-header"><h2>Generate Content</h2><p>Blog posts, GBP updates, and social captions from your real data.</p></div>
-      <div class="two-col" style="align-items:start">
-        <div>
-          <div class="card">
-            <div class="card-title">Content Brief</div>
-            <div class="gen-form">
-              <div><label>Content Type</label>
-                <select id="gen-type">
-                  <option value="blog">Blog Post</option>
-                  <option value="gbp">GBP Post</option>
-                  <option value="social">Social Captions</option>
-                  <option value="all">All Three</option>
-                </select>
-              </div>
-              <div><label>Topic / Focus</label><input type="text" id="gen-topic" placeholder="e.g. EV charger install, panel upgrade, summer safety" /></div>
-              <div><label>Target Area (optional)</label><input type="text" id="gen-area" placeholder="e.g. Dripping Springs, Westlake, Buda" /></div>
-              <div><label>Data Context (paste top queries or notes)</label><textarea id="gen-context" placeholder="Paste top search queries or leave blank…"></textarea></div>
-              <div><label>Tone</label>
-                <select id="gen-tone">
-                  <option value="professional">Professional &amp; trustworthy</option>
-                  <option value="friendly">Friendly &amp; approachable</option>
-                  <option value="urgent">Urgent / safety-focused</option>
-                </select>
-              </div>
-              <button class="btn btn-primary" id="gen-btn" onclick="generateContent()">⚡ Generate</button>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="card">
-            <div class="gen-tabs">
-              <div class="gen-tab active" onclick="showGenTab('blog',this)">Blog Post</div>
-              <div class="gen-tab" onclick="showGenTab('gbp',this)">GBP Post</div>
-              <div class="gen-tab" onclick="showGenTab('social',this)">Social</div>
-            </div>
-            <div id="gen-output-blog" class="gen-output empty">Fill in the brief and click Generate.</div>
-            <div id="gen-output-gbp" class="gen-output empty" style="display:none">GBP post will appear here.</div>
-            <div id="gen-output-social" class="gen-output empty" style="display:none">Social captions will appear here.</div>
-            <div style="margin-top:12px;display:flex;gap:10px">
-              <button class="btn btn-ghost btn-sm" onclick="copyOutput()">Copy</button>
-              <button class="btn btn-ghost btn-sm" onclick="generateContent()">Regenerate</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+ <!-- GENERATE -->
+ <div class="page" id="page-generate">
+ <div class="page-header"><h2>Generate Content</h2><p>Blog posts, GBP updates, and social captions from your real data.</p></div>
+ <div class="two-col" style="align-items:start">
+ <div>
+ <div class="card">
+ <div class="card-title">Content Brief</div>
+ <div class="gen-form">
+ <div><label>Content Type</label>
+ <select id="gen-type">
+ <option value="blog">Blog Post</option>
+ <option value="gbp">GBP Post</option>
+ <option value="social">Social Captions</option>
+ <option value="all">All Three</option>
+ </select>
+ </div>
+ <div><label>Topic / Focus</label><input type="text" id="gen-topic" placeholder="e.g. EV charger install, panel upgrade, summer safety" /></div>
+ <div><label>Target Area (optional)</label><input type="text" id="gen-area" placeholder="e.g. Dripping Springs, Westlake, Buda" /></div>
+ <div><label>Data Context (paste top queries or notes)</label><textarea id="gen-context" placeholder="Paste top search queries or leave blank…"></textarea></div>
+ <div><label>Tone</label>
+ <select id="gen-tone">
+ <option value="professional">Professional &amp; trustworthy</option>
+ <option value="friendly">Friendly &amp; approachable</option>
+ <option value="urgent">Urgent / safety-focused</option>
+ </select>
+ </div>
+ <button class="btn btn-primary" id="gen-btn" onclick="generateContent()">⚡ Generate</button>
+ </div>
+ </div>
+ </div>
+ <div>
+ <div class="card">
+ <div class="gen-tabs">
+ <div class="gen-tab active" onclick="showGenTab('blog',this)">Blog Post</div>
+ <div class="gen-tab" onclick="showGenTab('gbp',this)">GBP Post</div>
+ <div class="gen-tab" onclick="showGenTab('social',this)">Social</div>
+ </div>
+ <div id="gen-output-blog" class="gen-output empty">Fill in the brief and click Generate.</div>
+ <div id="gen-output-gbp" class="gen-output empty" style="display:none">GBP post will appear here.</div>
+ <div id="gen-output-social" class="gen-output empty" style="display:none">Social captions will appear here.</div>
+ <div style="margin-top:12px;display:flex;gap:10px">
+ <button class="btn btn-ghost btn-sm" onclick="copyOutput()">Copy</button>
+ <button class="btn btn-ghost btn-sm" onclick="generateContent()">Regenerate</button>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-    <!-- SETUP -->
-    <div class="page" id="page-setup">
-      <div class="page-header"><h2>Connect APIs</h2><p>Credentials are stored in your browser only — never sent anywhere except Google.</p></div>
-      <div class="connect-grid">
-        <div class="connect-card"><div class="svc-icon">🔍</div><div class="svc-name">Search Console</div><div class="svc-status" id="sc-status-label">Not connected</div><span class="badge" id="sc-status-badge" style="background:rgba(239,68,68,.15);color:#f87171">Disconnected</span></div>
-        <div class="connect-card"><div class="svc-icon">📊</div><div class="svc-name">Google Analytics</div><div class="svc-status" id="ga-status-label">Not connected</div><span class="badge" id="ga-status-badge" style="background:rgba(239,68,68,.15);color:#f87171">Disconnected</span></div>
-        <div class="connect-card"><div class="svc-icon">📢</div><div class="svc-name">Google Ads</div><div class="svc-status" id="ads-status-label">Needs dev token</div><span class="badge" id="ads-status-badge" style="background:rgba(245,158,11,.15);color:#fbbf24">Partial</span></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Your Credentials (pre-filled)</div>
-        <div class="field-wrap"><label>Google OAuth Client ID</label><input type="text" id="clientIdInput" value="397046160179-bgel74vs4k24lo22n00gs24ng4ti5bhd.apps.googleusercontent.com" /></div>
-        <div class="field-wrap"><label>GA4 Property ID</label><input type="text" id="ga4PropInput" value="properties/448586344" /></div>
-        <div class="field-wrap"><label>Search Console Site</label><input type="text" id="scSiteInput" value="sc-domain:texaselectricandlight.com" /></div>
-        <button class="btn btn-ghost btn-sm" onclick="saveCredentials()">Save Changes</button>
-        <span id="cred-saved" style="color:var(--lime);font-size:12px;margin-left:12px;display:none">✓ Saved</span>
-      </div>
-      <div class="card">
-        <div class="card-title">Authorize with Google</div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Sign in with the Google account that has access to Search Console and Analytics for texaselectricandlight.com.</p>
-        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-primary" id="authBtn" onclick="startOAuth()">Sign in with Google</button>
-          <button class="btn btn-ghost" id="revokeBtn" onclick="revokeAuth()" style="display:none">Disconnect</button>
-          <span id="auth-user-info" style="font-size:12px;color:var(--muted)"></span>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Google Ads Setup</div>
-        <div class="setup-steps">
-          <div class="setup-step"><div><strong>Apply for a Developer Token</strong><p>Go to <a href="https://ads.google.com/home/tools/manager-accounts/" target="_blank" style="color:var(--lime)">Google Ads Manager</a> → API Center → apply for a developer token. Takes 1-2 business days to approve.</p></div></div>
-          <div class="setup-step"><div><strong>Come back here once approved</strong><p>Paste your developer token and customer ID below and we'll wire it up.</p></div></div>
-        </div>
-      </div>
-    </div>
+ <!-- SETUP -->
+ <div class="page" id="page-setup">
+ <div class="page-header"><h2>Connect APIs</h2><p>Credentials are stored in your browser only — never sent anywhere except Google.</p></div>
+ <div class="connect-grid">
+ <div class="connect-card"><div class="svc-icon">🔍</div><div class="svc-name">Search Console</div><div class="svc-status" id="sc-status-label">Not connected</div><span class="badge" id="sc-status-badge" style="background:rgba(239,68,68,.15);color:#f87171">Disconnected</span></div>
+ <div class="connect-card"><div class="svc-icon">📊</div><div class="svc-name">Google Analytics</div><div class="svc-status" id="ga-status-label">Not connected</div><span class="badge" id="ga-status-badge" style="background:rgba(239,68,68,.15);color:#f87171">Disconnected</span></div>
+ <div class="connect-card"><div class="svc-icon">📢</div><div class="svc-name">Google Ads</div><div class="svc-status" id="ads-status-label">Needs dev token</div><span class="badge" id="ads-status-badge" style="background:rgba(245,158,11,.15);color:#fbbf24">Partial</span></div>
+ </div>
+ <div class="card">
+ <div class="card-title">Your Credentials (pre-filled)</div>
+ <div class="field-wrap"><label>Google OAuth Client ID</label><input type="text" id="clientIdInput" value="397046160179-bgel74vs4k24lo22n00gs24ng4ti5bhd.apps.googleusercontent.com" /></div>
+ <div class="field-wrap"><label>GA4 Property ID</label><input type="text" id="ga4PropInput" value="properties/448586344" /></div>
+ <div class="field-wrap"><label>Search Console Site</label><input type="text" id="scSiteInput" value="sc-domain:texaselectricandlight.com" /></div>
+ <button class="btn btn-ghost btn-sm" onclick="saveCredentials()">Save Changes</button>
+ <span id="cred-saved" style="color:var(--lime);font-size:12px;margin-left:12px;display:none">✓ Saved</span>
+ </div>
+ <div class="card">
+ <div class="card-title">Authorize with Google</div>
+ <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Sign in with the Google account that has access to Search Console and Analytics for texaselectricandlight.com.</p>
+ <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+ <button class="btn btn-primary" id="authBtn" onclick="startOAuth()">Sign in with Google</button>
+ <button class="btn btn-ghost" id="revokeBtn" onclick="revokeAuth()" style="display:none">Disconnect</button>
+ <span id="auth-user-info" style="font-size:12px;color:var(--muted)"></span>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-title">Google Ads Setup</div>
+ <div class="setup-steps">
+ <div class="setup-step"><div><strong>Apply for a Developer Token</strong><p>Go to <a href="https://ads.google.com/home/tools/manager-accounts/" target="_blank" style="color:var(--lime)">Google Ads Manager</a> → API Center → apply for a developer token. Takes 1-2 business days to approve.</p></div></div>
+ <div class="setup-step"><div><strong>Come back here once approved</strong><p>Paste your developer token and customer ID below and we'll wire it up.</p></div></div>
+ </div>
+ </div>
+ </div>
 
-  </main>
+ </main>
 </div>
 
 <script>
 // ── CONFIG ──
 const CLIENT_ID = '397046160179-bgel74vs4k24lo22n00gs24ng4ti5bhd.apps.googleusercontent.com';
-const GA4_PROP  = 'properties/448586344';
-const SC_SITE   = 'sc-domain:texaselectricandlight.com';
-const SCOPES    = 'https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics.readonly openid email profile';
+const GA4_PROP = 'properties/448586344';
+const SC_SITE = 'sc-domain:texaselectricandlight.com';
+const SCOPES = 'https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics.readonly openid email profile';
 
 // ── STATE ──
 let tokenClient = null;
 let accessToken = null;
-let clientId    = localStorage.getItem('tel_client_id') || CLIENT_ID;
-let ga4Prop     = localStorage.getItem('tel_ga4_prop')  || GA4_PROP;
-let scSite      = localStorage.getItem('tel_sc_site')   || SC_SITE;
+let clientId = localStorage.getItem('tel_client_id') || CLIENT_ID;
+let ga4Prop = localStorage.getItem('tel_ga4_prop') || GA4_PROP;
+let scSite = localStorage.getItem('tel_sc_site') || SC_SITE;
 let currentGenTab = 'blog';
 let dashData = { sc: null, scQueries: [], gaPages: [], gaChannels: [], dateRange: '' };
 
 // ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
-  accessToken = localStorage.getItem('tel_access_token') || null;
-  document.getElementById('clientIdInput').value = clientId;
-  document.getElementById('ga4PropInput').value  = ga4Prop;
-  document.getElementById('scSiteInput').value   = scSite;
-  loadGIS();
-  updateConnectionStatus();
-  updateOverviewDate();
-  if (accessToken) fetchUserInfo();
+ accessToken = localStorage.getItem('tel_access_token') || null;
+ document.getElementById('clientIdInput').value = clientId;
+ document.getElementById('ga4PropInput').value = ga4Prop;
+ document.getElementById('scSiteInput').value = scSite;
+ loadGIS();
+ updateConnectionStatus();
+ updateOverviewDate();
+ if (accessToken) fetchUserInfo();
 });
 
 function loadGIS() {
-  const s = document.createElement('script');
-  s.src = 'https://accounts.google.com/gsi/client';
-  s.onload = initTokenClient;
-  document.head.appendChild(s);
+ const s = document.createElement('script');
+ s.src = 'https://accounts.google.com/gsi/client';
+ s.onload = initTokenClient;
+ document.head.appendChild(s);
 }
 
 function initTokenClient() {
-  if (!clientId || !window.google) return;
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: clientId,
-    scope: SCOPES,
-    callback: handleTokenResponse
-  });
+ if (!clientId || !window.google) return;
+ tokenClient = google.accounts.oauth2.initTokenClient({
+ client_id: clientId,
+ scope: SCOPES,
+ callback: handleTokenResponse
+ });
 }
 
 // ── NAV ──
 function showPage(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  if (el) el.classList.add('active');
+ document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+ document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+ document.getElementById('page-' + id).classList.add('active');
+ if (el) el.classList.add('active');
 }
 
 // ── CREDENTIALS ──
 function saveCredentials() {
-  clientId = document.getElementById('clientIdInput').value.trim();
-  ga4Prop  = document.getElementById('ga4PropInput').value.trim();
-  scSite   = document.getElementById('scSiteInput').value.trim();
-  localStorage.setItem('tel_client_id', clientId);
-  localStorage.setItem('tel_ga4_prop',  ga4Prop);
-  localStorage.setItem('tel_sc_site',   scSite);
-  const el = document.getElementById('cred-saved');
-  el.style.display = 'inline';
-  setTimeout(() => el.style.display = 'none', 2000);
-  initTokenClient();
+ clientId = document.getElementById('clientIdInput').value.trim();
+ ga4Prop = document.getElementById('ga4PropInput').value.trim();
+ scSite = document.getElementById('scSiteInput').value.trim();
+ localStorage.setItem('tel_client_id', clientId);
+ localStorage.setItem('tel_ga4_prop', ga4Prop);
+ localStorage.setItem('tel_sc_site', scSite);
+ const el = document.getElementById('cred-saved');
+ el.style.display = 'inline';
+ setTimeout(() => el.style.display = 'none', 2000);
+ initTokenClient();
 }
 
 // ── OAUTH ──
 function startOAuth() {
-  if (!window.google) { alert('Google still loading, wait a moment.'); return; }
-  if (!tokenClient) initTokenClient();
-  tokenClient.requestAccessToken({ prompt: 'select_account' });
+ if (!window.google) { alert('Google still loading, wait a moment.'); return; }
+ if (!tokenClient) initTokenClient();
+ tokenClient.requestAccessToken({ prompt: 'select_account' });
 }
 
 function handleTokenResponse(resp) {
-  if (resp.error) { console.error(resp); return; }
-  accessToken = resp.access_token;
-  localStorage.setItem('tel_access_token', accessToken);
-  updateConnectionStatus();
-  fetchUserInfo();
-  loadOverview();
+ if (resp.error) { console.error(resp); return; }
+ accessToken = resp.access_token;
+ localStorage.setItem('tel_access_token', accessToken);
+ updateConnectionStatus();
+ fetchUserInfo();
+ loadOverview();
 }
 
 function fetchUserInfo() {
-  if (!accessToken) return;
-  fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + accessToken } })
-    .then(r => r.json()).then(d => {
-      if (d.email) {
-        document.getElementById('auth-user-info').textContent = 'Signed in as: ' + d.email;
-        document.getElementById('revokeBtn').style.display = 'inline-flex';
-      }
-    }).catch(() => {});
+ if (!accessToken) return;
+ fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + accessToken } })
+ .then(r => r.json()).then(d => {
+ if (d.email) {
+ document.getElementById('auth-user-info').textContent = 'Signed in as: ' + d.email;
+ document.getElementById('revokeBtn').style.display = 'inline-flex';
+ }
+ }).catch(() => {});
 }
 
 function revokeAuth() {
-  if (!accessToken) return;
-  google.accounts.oauth2.revoke(accessToken, () => {
-    accessToken = null;
-    localStorage.removeItem('tel_access_token');
-    document.getElementById('auth-user-info').textContent = '';
-    document.getElementById('revokeBtn').style.display = 'none';
-    updateConnectionStatus();
-  });
+ if (!accessToken) return;
+ google.accounts.oauth2.revoke(accessToken, () => {
+ accessToken = null;
+ localStorage.removeItem('tel_access_token');
+ document.getElementById('auth-user-info').textContent = '';
+ document.getElementById('revokeBtn').style.display = 'none';
+ updateConnectionStatus();
+ });
 }
 
 function updateConnectionStatus() {
-  const ok = !!accessToken;
-  const setStatus = (badgeId, labelId, text, r, g, b) => {
-    const b_ = document.getElementById(badgeId);
-    const l  = document.getElementById(labelId);
-    b_.style.background = `rgba(${r},${g},${b},.15)`;
-    b_.style.color = `rgb(${r},${g},${b})`;
-    b_.textContent = text;
-    l.textContent = ok ? 'Token active' : 'Not connected';
-  };
-  if (ok) {
-    setStatus('sc-status-badge','sc-status-label','Connected',16,185,129);
-    setStatus('ga-status-badge','ga-status-label','Connected',16,185,129);
-    document.getElementById('ovNotConnected').style.display = 'none';
-  } else {
-    setStatus('sc-status-badge','sc-status-label','Disconnected',239,68,68);
-    setStatus('ga-status-badge','ga-status-label','Disconnected',239,68,68);
-    document.getElementById('ovNotConnected').style.display = 'block';
-  }
+ const ok = !!accessToken;
+ const setStatus = (badgeId, labelId, text, r, g, b) => {
+ const b_ = document.getElementById(badgeId);
+ const l = document.getElementById(labelId);
+ b_.style.background = `rgba(${r},${g},${b},.15)`;
+ b_.style.color = `rgb(${r},${g},${b})`;
+ b_.textContent = text;
+ l.textContent = ok ? 'Token active' : 'Not connected';
+ };
+ if (ok) {
+ setStatus('sc-status-badge','sc-status-label','Connected',16,185,129);
+ setStatus('ga-status-badge','ga-status-label','Connected',16,185,129);
+ document.getElementById('ovNotConnected').style.display = 'none';
+ } else {
+ setStatus('sc-status-badge','sc-status-label','Disconnected',239,68,68);
+ setStatus('ga-status-badge','ga-status-label','Disconnected',239,68,68);
+ document.getElementById('ovNotConnected').style.display = 'block';
+ }
 }
 
 // ── HELPERS ──
 function fmt(n) {
-  if (n == null) return '—';
-  if (n >= 1000000) return (n/1000000).toFixed(1)+'M';
-  if (n >= 1000) return (n/1000).toFixed(1)+'K';
-  return Number(n).toLocaleString();
+ if (n == null) return '—';
+ if (n >= 1000000) return (n/1000000).toFixed(1)+'M';
+ if (n >= 1000) return (n/1000).toFixed(1)+'K';
+ return Number(n).toLocaleString();
 }
 function fmtPct(n) { return n != null ? (n*100).toFixed(1)+'%' : '—'; }
 function fmtPos(n) { return n != null ? Number(n).toFixed(1) : '—'; }
 function fmtSecs(s) { if (!s) return '—'; const m=Math.floor(s/60),sc=Math.round(s%60); return m>0?m+'m '+sc+'s':sc+'s'; }
 function dateRange(days) {
-  const end = new Date(), start = new Date();
-  start.setDate(end.getDate()-days);
-  return { startDate: start.toISOString().split('T')[0], endDate: end.toISOString().split('T')[0] };
+ const end = new Date(), start = new Date();
+ start.setDate(end.getDate()-days);
+ return { startDate: start.toISOString().split('T')[0], endDate: end.toISOString().split('T')[0] };
 }
 function updateOverviewDate() {
-  const d = dateRange(28);
-  document.getElementById('ovDateRange').textContent = d.startDate + ' → ' + d.endDate;
+ const d = dateRange(28);
+ document.getElementById('ovDateRange').textContent = d.startDate + ' → ' + d.endDate;
 }
 function requireAuth(cb) {
-  if (!accessToken) { alert('Sign in with Google first — go to Connect APIs.'); return; }
-  cb();
+ if (!accessToken) { alert('Sign in with Google first — go to Connect APIs.'); return; }
+ cb();
 }
 function headers() { return { 'Authorization': 'Bearer '+accessToken, 'Content-Type': 'application/json' }; }
 
 function renderQueryTable(rows, id) {
-  if (!rows || !rows.length) { document.getElementById(id).innerHTML = '<p style="color:var(--muted);font-size:13px">No data.</p>'; return; }
-  const max = Math.max(...rows.map(r=>r.clicks||0),1);
-  let html = '<table><thead><tr><th>Query</th><th>Clicks</th><th>Impr</th><th>Pos</th></tr></thead><tbody>';
-  rows.slice(0,12).forEach(r => {
-    const pct = Math.round((r.clicks/max)*100);
-    html += `<tr><td>${r.keys?r.keys[0]:r.query||'—'}</td><td><div style="display:flex;align-items:center;gap:8px">${fmt(r.clicks)}<div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div></div></td><td class="muted">${fmt(r.impressions)}</td><td class="muted">${fmtPos(r.position)}</td></tr>`;
-  });
-  html += '</tbody></table>';
-  document.getElementById(id).innerHTML = html;
+ if (!rows || !rows.length) { document.getElementById(id).innerHTML = '<p style="color:var(--muted);font-size:13px">No data.</p>'; return; }
+ const max = Math.max(...rows.map(r=>r.clicks||0),1);
+ let html = '<table><thead><tr><th>Query</th><th>Clicks</th><th>Impr</th><th>Pos</th></tr></thead><tbody>';
+ rows.slice(0,12).forEach(r => {
+ const pct = Math.round((r.clicks/max)*100);
+ html += `<tr><td>${r.keys?r.keys[0]:r.query||'—'}</td><td><div style="display:flex;align-items:center;gap:8px">${fmt(r.clicks)}<div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div></div></td><td class="muted">${fmt(r.impressions)}</td><td class="muted">${fmtPos(r.position)}</td></tr>`;
+ });
+ html += '</tbody></table>';
+ document.getElementById(id).innerHTML = html;
 }
 
 function renderPageTable(rows, id) {
-  if (!rows || !rows.length) { document.getElementById(id).innerHTML = '<p style="color:var(--muted);font-size:13px">No data.</p>'; return; }
-  const vals = rows.map(r => parseFloat(r.metricValues?.[0]?.value || r.clicks || 0));
-  const max = Math.max(...vals, 1);
-  let html = '<table><thead><tr><th>Page</th><th>Sessions</th></tr></thead><tbody>';
-  rows.slice(0,12).forEach((r,i) => {
-    const page = (r.dimensionValues?.[0]?.value || r.keys?.[0] || '—').replace('https://texaselectricandlight.com','') || '/';
-    const val = vals[i];
-    const pct = Math.round((val/max)*100);
-    html += `<tr><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${page}">${page}</td><td><div style="display:flex;align-items:center;gap:8px">${fmt(val)}<div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div></div></td></tr>`;
-  });
-  html += '</tbody></table>';
-  document.getElementById(id).innerHTML = html;
+ if (!rows || !rows.length) { document.getElementById(id).innerHTML = '<p style="color:var(--muted);font-size:13px">No data.</p>'; return; }
+ const vals = rows.map(r => parseFloat(r.metricValues?.[0]?.value || r.clicks || 0));
+ const max = Math.max(...vals, 1);
+ let html = '<table><thead><tr><th>Page</th><th>Sessions</th></tr></thead><tbody>';
+ rows.slice(0,12).forEach((r,i) => {
+ const page = (r.dimensionValues?.[0]?.value || r.keys?.[0] || '—').replace('https://texaselectricandlight.com','') || '/';
+ const val = vals[i];
+ const pct = Math.round((val/max)*100);
+ html += `<tr><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${page}">${page}</td><td><div style="display:flex;align-items:center;gap:8px">${fmt(val)}<div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div></div></td></tr>`;
+ });
+ html += '</tbody></table>';
+ document.getElementById(id).innerHTML = html;
 }
 
 // ── OVERVIEW ──
 async function loadOverview() {
-  if (!accessToken) { document.getElementById('ovNotConnected').style.display='block'; return; }
-  document.getElementById('ovNotConnected').style.display='none';
-  const { startDate, endDate } = dateRange(28);
-  dashData.dateRange = startDate + ' to ' + endDate;
+ if (!accessToken) { document.getElementById('ovNotConnected').style.display='block'; return; }
+ document.getElementById('ovNotConnected').style.display='none';
+ const { startDate, endDate } = dateRange(28);
+ dashData.dateRange = startDate + ' to ' + endDate;
 
-  // Search Console
-  try {
-    const siteUrl = encodeURIComponent(scSite);
-    const base = `https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/searchAnalytics/query`;
-    const sum = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:[]})}).then(r=>r.json());
-    if (sum.rows?.[0]) {
-      const r = sum.rows[0];
-      dashData.sc = r;
-      document.getElementById('ov-clicks').textContent = fmt(r.clicks);
-      document.getElementById('ov-impressions').textContent = fmt(r.impressions);
-      document.getElementById('ov-position').textContent = fmtPos(r.position);
-    }
-    const qd = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:['query'],rowLimit:15})}).then(r=>r.json());
-    dashData.scQueries = qd.rows || [];
-    renderQueryTable(qd.rows, 'ov-queries');
-    if (qd.rows?.length) generateOpportunities(qd.rows);
-  } catch(e) { console.warn('SC error:', e); }
+ // Search Console
+ try {
+ const siteUrl = encodeURIComponent(scSite);
+ const base = `https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/searchAnalytics/query`;
+ const sum = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:[]})}).then(r=>r.json());
+ if (sum.rows?.[0]) {
+ const r = sum.rows[0];
+ dashData.sc = r;
+ document.getElementById('ov-clicks').textContent = fmt(r.clicks);
+ document.getElementById('ov-impressions').textContent = fmt(r.impressions);
+ document.getElementById('ov-position').textContent = fmtPos(r.position);
+ }
+ const qd = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:['query'],rowLimit:15})}).then(r=>r.json());
+ dashData.scQueries = qd.rows || [];
+ renderQueryTable(qd.rows, 'ov-queries');
+ if (qd.rows?.length) generateOpportunities(qd.rows);
+ } catch(e) { console.warn('SC error:', e); }
 
-  // GA4
-  try {
-    const url = `https://analyticsdata.googleapis.com/v1beta/${ga4Prop}:runReport`;
-    const sumBody = { dateRanges:[{startDate,endDate}], metrics:[{name:'sessions'},{name:'activeUsers'},{name:'engagedSessions'},{name:'averageSessionDuration'}] };
-    const sum = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(sumBody)}).then(r=>r.json());
-    if (sum.rows?.[0]) {
-      const v = sum.rows[0].metricValues;
-      document.getElementById('ov-sessions').textContent = fmt(parseInt(v[0].value));
-    }
-    const pageBody = { dateRanges:[{startDate,endDate}], dimensions:[{name:'pagePath'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}], limit:10 };
-    const pd = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(pageBody)}).then(r=>r.json());
-    dashData.gaPages = pd.rows || [];
-    renderPageTable(pd.rows, 'ov-pages');
+ // GA4
+ try {
+ const url = `https://analyticsdata.googleapis.com/v1beta/${ga4Prop}:runReport`;
+ const sumBody = { dateRanges:[{startDate,endDate}], metrics:[{name:'sessions'},{name:'activeUsers'},{name:'engagedSessions'},{name:'averageSessionDuration'}] };
+ const sum = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(sumBody)}).then(r=>r.json());
+ if (sum.rows?.[0]) {
+ const v = sum.rows[0].metricValues;
+ document.getElementById('ov-sessions').textContent = fmt(parseInt(v[0].value));
+ }
+ const pageBody = { dateRanges:[{startDate,endDate}], dimensions:[{name:'pagePath'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}], limit:10 };
+ const pd = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(pageBody)}).then(r=>r.json());
+ dashData.gaPages = pd.rows || [];
+ renderPageTable(pd.rows, 'ov-pages');
 
-    const chanBody = { dateRanges:[{startDate,endDate}], dimensions:[{name:'sessionDefaultChannelGroup'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}] };
-    const cd = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(chanBody)}).then(r=>r.json());
-    dashData.gaChannels = cd.rows || [];
-  } catch(e) { console.warn('GA4 error:', e); }
+ const chanBody = { dateRanges:[{startDate,endDate}], dimensions:[{name:'sessionDefaultChannelGroup'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}] };
+ const cd = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(chanBody)}).then(r=>r.json());
+ dashData.gaChannels = cd.rows || [];
+ } catch(e) { console.warn('GA4 error:', e); }
 
-  document.getElementById('exportBtn').style.display = 'inline-flex';
+ document.getElementById('exportBtn').style.display = 'inline-flex';
 }
 
 async function generateOpportunities(queries) {
-  const topQ = queries.slice(0,8).map(r=>`"${r.keys[0]}" (${fmt(r.clicks)} clicks, pos ${fmtPos(r.position)})`).join(', ');
-  const prompt = `You are a content strategist for Texas Electric and Light (TECL #28315), a licensed electrician in Austin/Dripping Springs TX.\n\nTop Google search queries for their site: ${topQ}\n\nSuggest 3 specific content ideas for this week. For each: content type, exact title/hook, one sentence on why it will drive leads. Austin/Texas specific. Plain numbered list, no markdown.`;
-  try {
-    const r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,messages:[{role:'user',content:prompt}]})});
-    const d = await r.json();
-    const text = d.content?.find(c=>c.type==='text')?.text || 'Could not generate.';
-    document.getElementById('ov-opps').innerHTML = `<div style="font-size:13px;line-height:1.9">${text.replace(/\n/g,'<br>')}</div>`;
-  } catch(e) { document.getElementById('ov-opps').innerHTML = '<p style="color:var(--muted);font-size:13px">Content generator unavailable.</p>'; }
+ const topQ = queries.slice(0,8).map(r=>`"${r.keys[0]}" (${fmt(r.clicks)} clicks, pos ${fmtPos(r.position)})`).join(', ');
+ const prompt = `You are a content strategist for Texas Electric and Light (TECL #28315), a licensed electrician in Austin/Dripping Springs TX.\n\nTop Google search queries for their site: ${topQ}\n\nSuggest 3 specific content ideas for this week. For each: content type, exact title/hook, one sentence on why it will drive leads. Austin/Texas specific. Plain numbered list, no markdown.`;
+ try {
+ const r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+ const d = await r.json();
+ const text = d.content?.find(c=>c.type==='text')?.text || 'Could not generate.';
+ document.getElementById('ov-opps').innerHTML = `<div style="font-size:13px;line-height:1.9">${text.replace(/\n/g,'<br>')}</div>`;
+ } catch(e) { document.getElementById('ov-opps').innerHTML = '<p style="color:var(--muted);font-size:13px">Content generator unavailable.</p>'; }
 }
 
 // ── SEARCH CONSOLE PAGE ──
 async function loadSearchConsole() {
-  requireAuth(async () => {
-    const days = parseInt(document.getElementById('scRange').value);
-    const { startDate, endDate } = dateRange(days);
-    const siteUrl = encodeURIComponent(scSite);
-    const base = `https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/searchAnalytics/query`;
-    try {
-      const sum = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:[]})}).then(r=>r.json());
-      if (sum.rows?.[0]) {
-        const r=sum.rows[0];
-        document.getElementById('sc-clicks').textContent=fmt(r.clicks);
-        document.getElementById('sc-impressions').textContent=fmt(r.impressions);
-        document.getElementById('sc-ctr').textContent=fmtPct(r.ctr);
-        document.getElementById('sc-pos').textContent=fmtPos(r.position);
-      }
-      const qd = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:['query'],rowLimit:25})}).then(r=>r.json());
-      renderQueryTable(qd.rows,'sc-queries');
-      const pd = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:['page'],rowLimit:25})}).then(r=>r.json());
-      if (pd.rows) {
-        const max = Math.max(...pd.rows.map(r=>r.clicks||0),1);
-        let html='<table><thead><tr><th>Page</th><th>Clicks</th></tr></thead><tbody>';
-        pd.rows.slice(0,12).forEach(r=>{
-          const page=(r.keys[0]||'').replace('https://texaselectricandlight.com','')||'/';
-          const pct=Math.round((r.clicks/max)*100);
-          html+=`<tr><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${page}</td><td><div style="display:flex;align-items:center;gap:8px">${fmt(r.clicks)}<div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div></div></td></tr>`;
-        });
-        document.getElementById('sc-pages').innerHTML=html+'</tbody></table>';
-      }
-      if (qd.rows) {
-        const lowCTR = qd.rows.filter(r=>r.impressions>50&&r.ctr<0.05).sort((a,b)=>b.impressions-a.impressions).slice(0,8);
-        if (lowCTR.length) {
-          let html='<table><thead><tr><th>Query</th><th>Impressions</th><th>CTR</th><th>Position</th></tr></thead><tbody>';
-          lowCTR.forEach(r=>{ html+=`<tr><td>${r.keys[0]}</td><td>${fmt(r.impressions)}</td><td style="color:var(--danger)">${fmtPct(r.ctr)}</td><td>${fmtPos(r.position)}</td></tr>`; });
-          document.getElementById('sc-lowctr').innerHTML=html+'</tbody></table>';
-        } else {
-          document.getElementById('sc-lowctr').innerHTML='<p style="color:var(--green);font-size:13px">No major low-CTR issues found.</p>';
-        }
-      }
-    } catch(e) { document.getElementById('sc-queries').innerHTML=`<p style="color:var(--danger);font-size:13px">Error: ${e.message}</p>`; }
-  });
+ requireAuth(async () => {
+ const days = parseInt(document.getElementById('scRange').value);
+ const { startDate, endDate } = dateRange(days);
+ const siteUrl = encodeURIComponent(scSite);
+ const base = `https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/searchAnalytics/query`;
+ try {
+ const sum = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:[]})}).then(r=>r.json());
+ if (sum.rows?.[0]) {
+ const r=sum.rows[0];
+ document.getElementById('sc-clicks').textContent=fmt(r.clicks);
+ document.getElementById('sc-impressions').textContent=fmt(r.impressions);
+ document.getElementById('sc-ctr').textContent=fmtPct(r.ctr);
+ document.getElementById('sc-pos').textContent=fmtPos(r.position);
+ }
+ const qd = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:['query'],rowLimit:25})}).then(r=>r.json());
+ renderQueryTable(qd.rows,'sc-queries');
+ const pd = await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:['page'],rowLimit:25})}).then(r=>r.json());
+ if (pd.rows) {
+ const max = Math.max(...pd.rows.map(r=>r.clicks||0),1);
+ let html='<table><thead><tr><th>Page</th><th>Clicks</th></tr></thead><tbody>';
+ pd.rows.slice(0,12).forEach(r=>{
+ const page=(r.keys[0]||'').replace('https://texaselectricandlight.com','')||'/';
+ const pct=Math.round((r.clicks/max)*100);
+ html+=`<tr><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${page}</td><td><div style="display:flex;align-items:center;gap:8px">${fmt(r.clicks)}<div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div></div></td></tr>`;
+ });
+ document.getElementById('sc-pages').innerHTML=html+'</tbody></table>';
+ }
+ if (qd.rows) {
+ const lowCTR = qd.rows.filter(r=>r.impressions>50&&r.ctr<0.05).sort((a,b)=>b.impressions-a.impressions).slice(0,8);
+ if (lowCTR.length) {
+ let html='<table><thead><tr><th>Query</th><th>Impressions</th><th>CTR</th><th>Position</th></tr></thead><tbody>';
+ lowCTR.forEach(r=>{ html+=`<tr><td>${r.keys[0]}</td><td>${fmt(r.impressions)}</td><td style="color:var(--danger)">${fmtPct(r.ctr)}</td><td>${fmtPos(r.position)}</td></tr>`; });
+ document.getElementById('sc-lowctr').innerHTML=html+'</tbody></table>';
+ } else {
+ document.getElementById('sc-lowctr').innerHTML='<p style="color:var(--green);font-size:13px">No major low-CTR issues found.</p>';
+ }
+ }
+ } catch(e) { document.getElementById('sc-queries').innerHTML=`<p style="color:var(--danger);font-size:13px">Error: ${e.message}</p>`; }
+ });
 }
 
 // ── ANALYTICS PAGE ──
 async function loadAnalytics() {
-  requireAuth(async () => {
-    const days = parseInt(document.getElementById('gaRange').value);
-    const { startDate, endDate } = dateRange(days);
-    const url = `https://analyticsdata.googleapis.com/v1beta/${ga4Prop}:runReport`;
-    try {
-      const sumBody = { dateRanges:[{startDate,endDate}], metrics:[{name:'sessions'},{name:'activeUsers'},{name:'engagedSessions'},{name:'averageSessionDuration'}] };
-      const sum = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(sumBody)}).then(r=>r.json());
-      if (sum.rows?.[0]) {
-        const v=sum.rows[0].metricValues;
-        document.getElementById('ga-sessions').textContent=fmt(parseInt(v[0].value));
-        document.getElementById('ga-users').textContent=fmt(parseInt(v[1].value));
-        document.getElementById('ga-engaged').textContent=fmt(parseInt(v[2].value));
-        document.getElementById('ga-duration').textContent=fmtSecs(parseFloat(v[3].value));
-      }
-      const pageBody = { dateRanges:[{startDate,endDate}], dimensions:[{name:'pagePath'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}], limit:12 };
-      const pd = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(pageBody)}).then(r=>r.json());
-      renderPageTable(pd.rows,'ga-pages');
-      const chanBody = { dateRanges:[{startDate,endDate}], dimensions:[{name:'sessionDefaultChannelGroup'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}] };
-      const cd = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(chanBody)}).then(r=>r.json());
-      if (cd.rows) {
-        const total = cd.rows.reduce((s,r)=>s+parseInt(r.metricValues[0].value),0);
-        let html='';
-        cd.rows.forEach(r=>{
-          const name=r.dimensionValues[0].value, val=parseInt(r.metricValues[0].value), pct=Math.round((val/total)*100);
-          html+=`<div class="metric-row"><span class="metric-label">${name}</span><div style="display:flex;align-items:center;gap:10px"><div class="bar-wrap" style="width:80px"><div class="bar-fill" style="width:${pct}%"></div></div><span class="metric-val">${pct}%</span></div></div>`;
-        });
-        document.getElementById('ga-channels').innerHTML=html;
-      }
-    } catch(e) { document.getElementById('ga-pages').innerHTML=`<p style="color:var(--danger);font-size:13px">Error: ${e.message}</p>`; }
-  });
+ requireAuth(async () => {
+ const days = parseInt(document.getElementById('gaRange').value);
+ const { startDate, endDate } = dateRange(days);
+ const url = `https://analyticsdata.googleapis.com/v1beta/${ga4Prop}:runReport`;
+ try {
+ const sumBody = { dateRanges:[{startDate,endDate}], metrics:[{name:'sessions'},{name:'activeUsers'},{name:'engagedSessions'},{name:'averageSessionDuration'}] };
+ const sum = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(sumBody)}).then(r=>r.json());
+ if (sum.rows?.[0]) {
+ const v=sum.rows[0].metricValues;
+ document.getElementById('ga-sessions').textContent=fmt(parseInt(v[0].value));
+ document.getElementById('ga-users').textContent=fmt(parseInt(v[1].value));
+ document.getElementById('ga-engaged').textContent=fmt(parseInt(v[2].value));
+ document.getElementById('ga-duration').textContent=fmtSecs(parseFloat(v[3].value));
+ }
+ const pageBody = { dateRanges:[{startDate,endDate}], dimensions:[{name:'pagePath'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}], limit:12 };
+ const pd = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(pageBody)}).then(r=>r.json());
+ renderPageTable(pd.rows,'ga-pages');
+ const chanBody = { dateRanges:[{startDate,endDate}], dimensions:[{name:'sessionDefaultChannelGroup'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}] };
+ const cd = await fetch(url,{method:'POST',headers:headers(),body:JSON.stringify(chanBody)}).then(r=>r.json());
+ if (cd.rows) {
+ const total = cd.rows.reduce((s,r)=>s+parseInt(r.metricValues[0].value),0);
+ let html='';
+ cd.rows.forEach(r=>{
+ const name=r.dimensionValues[0].value, val=parseInt(r.metricValues[0].value), pct=Math.round((val/total)*100);
+ html+=`<div class="metric-row"><span class="metric-label">${name}</span><div style="display:flex;align-items:center;gap:10px"><div class="bar-wrap" style="width:80px"><div class="bar-fill" style="width:${pct}%"></div></div><span class="metric-val">${pct}%</span></div></div>`;
+ });
+ document.getElementById('ga-channels').innerHTML=html;
+ }
+ } catch(e) { document.getElementById('ga-pages').innerHTML=`<p style="color:var(--danger);font-size:13px">Error: ${e.message}</p>`; }
+ });
 }
 
 // ── INDEXING ──
 async function loadIndexing() {
-  requireAuth(async () => {
-    document.getElementById('idx-spinner').style.display='inline-block';
-    const { startDate, endDate } = dateRange(28);
-    const siteUrl = encodeURIComponent(scSite);
-    try {
-      // Sitemap
-      const sm = await fetch(`https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/sitemaps`,{headers:headers()}).then(r=>r.json());
-      if (sm.sitemap?.length) {
-        let submitted=0, indexed=0;
-        let html='<table><thead><tr><th>Sitemap</th><th>Submitted</th><th>Indexed</th></tr></thead><tbody>';
-        sm.sitemap.forEach(s=>{
-          const sub=s.contents?s.contents.reduce((a,c)=>a+(parseInt(c.submitted)||0),0):0;
-          const idx=s.contents?s.contents.reduce((a,c)=>a+(parseInt(c.indexed)||0),0):0;
-          submitted+=sub; indexed+=idx;
-          const path=s.path.replace('https://texaselectricandlight.com','');
-          html+=`<tr><td style="font-size:12px">${path}</td><td>${sub.toLocaleString()}</td><td>${idx.toLocaleString()}</td></tr>`;
-        });
-        html+='</tbody></table>';
-        document.getElementById('idx-sitemaps').innerHTML=html;
-        document.getElementById('idx-sitemap-count').textContent=submitted.toLocaleString();
-        document.getElementById('idx-sitemap-indexed').textContent=indexed.toLocaleString();
-        document.getElementById('idx-issues').textContent = sm.sitemap.some(s=>s.errors>0) ? 'Yes' : 'None';
-      } else {
-        document.getElementById('idx-sitemaps').innerHTML='<p style="color:var(--danger);font-size:13px;font-weight:600">No sitemap submitted yet.</p><p style="color:var(--muted);font-size:13px;margin-top:6px">Go to Search Console → Sitemaps → enter <code style="background:var(--bg);padding:2px 6px;color:var(--lime)">sitemap.xml</code> and submit.</p>';
-        document.getElementById('idx-issues').textContent='1';
-      }
-      // Pages in search results
-      const base=`https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/searchAnalytics/query`;
-      const pd=await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:['page'],rowLimit:250})}).then(r=>r.json());
-      const pages=pd.rows||[];
-      document.getElementById('idx-indexed').textContent=pages.length+'+';
-      if (pages.length) {
-        let html=`<p style="color:var(--muted);font-size:12px;margin-bottom:10px">${pages.length} pages appeared in Google in last 28 days.</p><table><thead><tr><th>Page</th><th>Clicks</th><th>Impr</th></tr></thead><tbody>`;
-        pages.slice(0,30).forEach(r=>{
-          const page=(r.keys[0]||'').replace('https://texaselectricandlight.com','')||'/';
-          html+=`<tr><td style="font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${page}</td><td>${fmt(r.clicks)}</td><td class="muted">${fmt(r.impressions)}</td></tr>`;
-        });
-        document.getElementById('idx-pages').innerHTML=html+'</tbody></table>';
-      }
-      // AI analysis
-      generateIndexingAnalysis(pages.length, sm.sitemap?.length > 0);
-    } catch(e) {
-      document.getElementById('idx-sitemaps').innerHTML=`<p style="color:var(--danger);font-size:13px">Error: ${e.message}</p>`;
-    } finally {
-      document.getElementById('idx-spinner').style.display='none';
-    }
-  });
+ requireAuth(async () => {
+ document.getElementById('idx-spinner').style.display='inline-block';
+ const { startDate, endDate } = dateRange(28);
+ const siteUrl = encodeURIComponent(scSite);
+ try {
+ // Sitemap
+ const sm = await fetch(`https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/sitemaps`,{headers:headers()}).then(r=>r.json());
+ if (sm.sitemap?.length) {
+ let submitted=0, indexed=0;
+ let html='<table><thead><tr><th>Sitemap</th><th>Submitted</th><th>Indexed</th></tr></thead><tbody>';
+ sm.sitemap.forEach(s=>{
+ const sub=s.contents?s.contents.reduce((a,c)=>a+(parseInt(c.submitted)||0),0):0;
+ const idx=s.contents?s.contents.reduce((a,c)=>a+(parseInt(c.indexed)||0),0):0;
+ submitted+=sub; indexed+=idx;
+ const path=s.path.replace('https://texaselectricandlight.com','');
+ html+=`<tr><td style="font-size:12px">${path}</td><td>${sub.toLocaleString()}</td><td>${idx.toLocaleString()}</td></tr>`;
+ });
+ html+='</tbody></table>';
+ document.getElementById('idx-sitemaps').innerHTML=html;
+ document.getElementById('idx-sitemap-count').textContent=submitted.toLocaleString();
+ document.getElementById('idx-sitemap-indexed').textContent=indexed.toLocaleString();
+ document.getElementById('idx-issues').textContent = sm.sitemap.some(s=>s.errors>0) ? 'Yes' : 'None';
+ } else {
+ document.getElementById('idx-sitemaps').innerHTML='<p style="color:var(--danger);font-size:13px;font-weight:600">No sitemap submitted yet.</p><p style="color:var(--muted);font-size:13px;margin-top:6px">Go to Search Console → Sitemaps → enter <code style="background:var(--bg);padding:2px 6px;color:var(--lime)">sitemap.xml</code> and submit.</p>';
+ document.getElementById('idx-issues').textContent='1';
+ }
+ // Pages in search results
+ const base=`https://searchconsole.googleapis.com/webmasters/v3/sites/${siteUrl}/searchAnalytics/query`;
+ const pd=await fetch(base,{method:'POST',headers:headers(),body:JSON.stringify({startDate,endDate,dimensions:['page'],rowLimit:250})}).then(r=>r.json());
+ const pages=pd.rows||[];
+ document.getElementById('idx-indexed').textContent=pages.length+'+';
+ if (pages.length) {
+ let html=`<p style="color:var(--muted);font-size:12px;margin-bottom:10px">${pages.length} pages appeared in Google in last 28 days.</p><table><thead><tr><th>Page</th><th>Clicks</th><th>Impr</th></tr></thead><tbody>`;
+ pages.slice(0,30).forEach(r=>{
+ const page=(r.keys[0]||'').replace('https://texaselectricandlight.com','')||'/';
+ html+=`<tr><td style="font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${page}</td><td>${fmt(r.clicks)}</td><td class="muted">${fmt(r.impressions)}</td></tr>`;
+ });
+ document.getElementById('idx-pages').innerHTML=html+'</tbody></table>';
+ }
+ // AI analysis
+ generateIndexingAnalysis(pages.length, sm.sitemap?.length > 0);
+ } catch(e) {
+ document.getElementById('idx-sitemaps').innerHTML=`<p style="color:var(--danger);font-size:13px">Error: ${e.message}</p>`;
+ } finally {
+ document.getElementById('idx-spinner').style.display='none';
+ }
+ });
 }
 
 async function generateIndexingAnalysis(indexedCount, hasSitemap) {
-  const prompt = `SEO advisor for Texas Electric and Light (TECL #28315), licensed electrician in Austin/Dripping Springs TX. Site has 85+ pages: 52 neighborhood pages, 12 blog posts, 10 project pages.\n\nIndexing data:\n- Pages confirmed in Google search results (last 28 days): ${indexedCount}\n- Sitemap submitted to Search Console: ${hasSitemap ? 'Yes' : 'No'}\n\nIn 3-4 sentences: plain-English summary of their indexing situation, the #1 fix this week, and what timeline to expect. Be specific to an electrical contractor in Austin TX.`;
-  try {
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,messages:[{role:'user',content:prompt}]})});
-    const d=await r.json();
-    const text=d.content?.find(c=>c.type==='text')?.text||'';
-    document.getElementById('idx-analysis').innerHTML=`<p style="font-size:13px;line-height:1.8">${text}</p>`;
-  } catch(e) { document.getElementById('idx-analysis').innerHTML='<p style="color:var(--muted);font-size:13px">Analysis unavailable.</p>'; }
+ const prompt = `SEO advisor for Texas Electric and Light (TECL #28315), licensed electrician in Austin/Dripping Springs TX. Site has 85+ pages: 52 neighborhood pages, 12 blog posts, 10 project pages.\n\nIndexing data:\n- Pages confirmed in Google search results (last 28 days): ${indexedCount}\n- Sitemap submitted to Search Console: ${hasSitemap ? 'Yes' : 'No'}\n\nIn 3-4 sentences: plain-English summary of their indexing situation, the #1 fix this week, and what timeline to expect. Be specific to an electrical contractor in Austin TX.`;
+ try {
+ const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,messages:[{role:'user',content:prompt}]})});
+ const d=await r.json();
+ const text=d.content?.find(c=>c.type==='text')?.text||'';
+ document.getElementById('idx-analysis').innerHTML=`<p style="font-size:13px;line-height:1.8">${text}</p>`;
+ } catch(e) { document.getElementById('idx-analysis').innerHTML='<p style="color:var(--muted);font-size:13px">Analysis unavailable.</p>'; }
 }
 
 // ── EXPORT TO CLAUDE ──
 function exportToClaude() {
-  const d = dashData;
-  const lines = [
-    '=== TEXAS ELECTRIC AND LIGHT — WEEKLY DATA SNAPSHOT ===',
-    'Period: ' + (d.dateRange || 'Last 28 days'),
-    'Site: texaselectricandlight.com | TECL #28315 | Dripping Springs / Austin TX',
-    ''
-  ];
-  if (d.sc) {
-    lines.push('── SEARCH CONSOLE ──');
-    lines.push('Clicks: '+fmt(d.sc.clicks)+' | Impressions: '+fmt(d.sc.impressions)+' | CTR: '+fmtPct(d.sc.ctr)+' | Avg Position: '+fmtPos(d.sc.position));
-    lines.push('');
-  }
-  if (d.scQueries?.length) {
-    lines.push('── TOP QUERIES ──');
-    d.scQueries.slice(0,15).forEach((r,i)=>{ lines.push(`${i+1}. "${r.keys[0]}" — ${fmt(r.clicks)} clicks, ${fmt(r.impressions)} impr, ${fmtPct(r.ctr)} CTR, pos ${fmtPos(r.position)}`); });
-    const lowCTR=d.scQueries.filter(r=>r.impressions>30&&r.ctr<0.05).sort((a,b)=>b.impressions-a.impressions).slice(0,5);
-    if (lowCTR.length) {
-      lines.push(''); lines.push('── LOW CTR OPPORTUNITIES ──');
-      lowCTR.forEach(r=>{ lines.push(`"${r.keys[0]}" — ${fmt(r.impressions)} impr, ${fmtPct(r.ctr)} CTR, pos ${fmtPos(r.position)}`); });
-    }
-    lines.push('');
-  }
-  if (d.gaPages?.length) {
-    lines.push('── TOP LANDING PAGES ──');
-    d.gaPages.slice(0,10).forEach((r,i)=>{ lines.push(`${i+1}. ${r.dimensionValues?.[0]?.value||'—'} — ${fmt(parseInt(r.metricValues?.[0]?.value||0))} sessions`); });
-    lines.push('');
-  }
-  if (d.gaChannels?.length) {
-    lines.push('── TRAFFIC BY CHANNEL ──');
-    const total=d.gaChannels.reduce((s,r)=>s+parseInt(r.metricValues?.[0]?.value||0),0);
-    d.gaChannels.forEach(r=>{ const n=r.dimensionValues?.[0]?.value||'—',v=parseInt(r.metricValues?.[0]?.value||0),pct=total?Math.round((v/total)*100):0; lines.push(`${n}: ${fmt(v)} sessions (${pct}%)`); });
-    lines.push('');
-  }
-  lines.push('=== END SNAPSHOT ===');
-  lines.push('Please analyze and: 1) Identify top SEO opportunities 2) Suggest content for this week 3) Flag anything that needs attention');
-  const text = lines.join('\n');
-  navigator.clipboard.writeText(text).then(()=>{
-    const c=document.getElementById('exportConfirm');
-    c.style.display='inline';
-    setTimeout(()=>c.style.display='none',3000);
-  }).catch(()=>{ prompt('Copy this data:', text); });
+ const d = dashData;
+ const lines = [
+ '=== TEXAS ELECTRIC AND LIGHT — WEEKLY DATA SNAPSHOT ===',
+ 'Period: ' + (d.dateRange || 'Last 28 days'),
+ 'Site: texaselectricandlight.com | TECL #28315 | Dripping Springs / Austin TX',
+ ''
+ ];
+ if (d.sc) {
+ lines.push('── SEARCH CONSOLE ──');
+ lines.push('Clicks: '+fmt(d.sc.clicks)+' | Impressions: '+fmt(d.sc.impressions)+' | CTR: '+fmtPct(d.sc.ctr)+' | Avg Position: '+fmtPos(d.sc.position));
+ lines.push('');
+ }
+ if (d.scQueries?.length) {
+ lines.push('── TOP QUERIES ──');
+ d.scQueries.slice(0,15).forEach((r,i)=>{ lines.push(`${i+1}. "${r.keys[0]}" — ${fmt(r.clicks)} clicks, ${fmt(r.impressions)} impr, ${fmtPct(r.ctr)} CTR, pos ${fmtPos(r.position)}`); });
+ const lowCTR=d.scQueries.filter(r=>r.impressions>30&&r.ctr<0.05).sort((a,b)=>b.impressions-a.impressions).slice(0,5);
+ if (lowCTR.length) {
+ lines.push(''); lines.push('── LOW CTR OPPORTUNITIES ──');
+ lowCTR.forEach(r=>{ lines.push(`"${r.keys[0]}" — ${fmt(r.impressions)} impr, ${fmtPct(r.ctr)} CTR, pos ${fmtPos(r.position)}`); });
+ }
+ lines.push('');
+ }
+ if (d.gaPages?.length) {
+ lines.push('── TOP LANDING PAGES ──');
+ d.gaPages.slice(0,10).forEach((r,i)=>{ lines.push(`${i+1}. ${r.dimensionValues?.[0]?.value||'—'} — ${fmt(parseInt(r.metricValues?.[0]?.value||0))} sessions`); });
+ lines.push('');
+ }
+ if (d.gaChannels?.length) {
+ lines.push('── TRAFFIC BY CHANNEL ──');
+ const total=d.gaChannels.reduce((s,r)=>s+parseInt(r.metricValues?.[0]?.value||0),0);
+ d.gaChannels.forEach(r=>{ const n=r.dimensionValues?.[0]?.value||'—',v=parseInt(r.metricValues?.[0]?.value||0),pct=total?Math.round((v/total)*100):0; lines.push(`${n}: ${fmt(v)} sessions (${pct}%)`); });
+ lines.push('');
+ }
+ lines.push('=== END SNAPSHOT ===');
+ lines.push('Please analyze and: 1) Identify top SEO opportunities 2) Suggest content for this week 3) Flag anything that needs attention');
+ const text = lines.join('\n');
+ navigator.clipboard.writeText(text).then(()=>{
+ const c=document.getElementById('exportConfirm');
+ c.style.display='inline';
+ setTimeout(()=>c.style.display='none',3000);
+ }).catch(()=>{ prompt('Copy this data:', text); });
 }
 
 // ── CONTENT GENERATOR ──
 function showGenTab(tab, el) {
-  currentGenTab=tab;
-  document.querySelectorAll('.gen-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  ['blog','gbp','social'].forEach(t=>{ document.getElementById('gen-output-'+t).style.display=t===tab?'block':'none'; });
+ currentGenTab=tab;
+ document.querySelectorAll('.gen-tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
+ ['blog','gbp','social'].forEach(t=>{ document.getElementById('gen-output-'+t).style.display=t===tab?'block':'none'; });
 }
 
 async function generateContent() {
-  const type=document.getElementById('gen-type').value;
-  const topic=document.getElementById('gen-topic').value.trim()||'electrical services';
-  const area=document.getElementById('gen-area').value.trim()||'Austin, TX';
-  const context=document.getElementById('gen-context').value.trim();
-  const tone=document.getElementById('gen-tone').value;
-  const toneDesc=tone==='professional'?'professional and trustworthy':tone==='friendly'?'friendly and approachable':'urgent and safety-focused';
-  const contextNote=context?'\n\nAnalytics context: '+context:'';
-  const btn=document.getElementById('gen-btn');
-  btn.disabled=true; btn.textContent='Generating…';
+ const type=document.getElementById('gen-type').value;
+ const topic=document.getElementById('gen-topic').value.trim()||'electrical services';
+ const area=document.getElementById('gen-area').value.trim()||'Austin, TX';
+ const context=document.getElementById('gen-context').value.trim();
+ const tone=document.getElementById('gen-tone').value;
+ const toneDesc=tone==='professional'?'professional and trustworthy':tone==='friendly'?'friendly and approachable':'urgent and safety-focused';
+ const contextNote=context?'\n\nAnalytics context: '+context:'';
+ const btn=document.getElementById('gen-btn');
+ btn.disabled=true; btn.textContent='Generating…';
 
-  const prompts={};
-  if (type==='blog'||type==='all') prompts.blog=`Write a complete blog post for Texas Electric and Light (TECL #28315) in ${area}.\nTopic: ${topic}\nTone: ${toneDesc}${contextNote}\n\nFormat:\n- SEO title with location keyword\n- Meta description (155 chars)\n- Full post 600-800 words with subheadings\n- CTA to texaselectricandlight.com or (512) 971-3547\n- Austin/Texas references\n- No markdown # headers, use plain text labels`;
-  if (type==='gbp'||type==='all') prompts.gbp=`Write a Google Business Profile post for Texas Electric and Light (TECL #28315) in ${area}.\nTopic: ${topic}\nTone: ${toneDesc}${contextNote}\n\n150-300 words. Strong hook. Local detail. CTA: call (512) 971-3547 or texaselectricandlight.com. Sound like a local pro.`;
-  if (type==='social'||type==='all') prompts.social=`Write 3 social media captions for Texas Electric and Light (TECL #28315) in ${area}.\nTopic: ${topic}\nTone: ${toneDesc}${contextNote}\n\nCaption 1: Facebook (200-250 words, educational)\nCaption 2: Instagram (125-175 words, 3-5 hashtags)\nCaption 3: LinkedIn (150-200 words, commercial angle)\nAll end with CTA to (512) 971-3547 or texaselectricandlight.com`;
+ const prompts={};
+ if (type==='blog'||type==='all') prompts.blog=`Write a complete blog post for Texas Electric and Light (TECL #28315) in ${area}.\nTopic: ${topic}\nTone: ${toneDesc}${contextNote}\n\nFormat:\n- SEO title with location keyword\n- Meta description (155 chars)\n- Full post 600-800 words with subheadings\n- CTA to texaselectricandlight.com or (512) 971-3547\n- Austin/Texas references\n- No markdown # headers, use plain text labels`;
+ if (type==='gbp'||type==='all') prompts.gbp=`Write a Google Business Profile post for Texas Electric and Light (TECL #28315) in ${area}.\nTopic: ${topic}\nTone: ${toneDesc}${contextNote}\n\n150-300 words. Strong hook. Local detail. CTA: call (512) 971-3547 or texaselectricandlight.com. Sound like a local pro.`;
+ if (type==='social'||type==='all') prompts.social=`Write 3 social media captions for Texas Electric and Light (TECL #28315) in ${area}.\nTopic: ${topic}\nTone: ${toneDesc}${contextNote}\n\nCaption 1: Facebook (200-250 words, educational)\nCaption 2: Instagram (125-175 words, 3-5 hashtags)\nCaption 3: LinkedIn (150-200 words, commercial angle)\nAll end with CTA to (512) 971-3547 or texaselectricandlight.com`;
 
-  try {
-    for (const [key, prompt] of Object.entries(prompts)) {
-      const el=document.getElementById('gen-output-'+key);
-      el.textContent='Generating…'; el.classList.remove('empty');
-      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
-      const d=await r.json();
-      el.textContent=d.content?.find(c=>c.type==='text')?.text||'Error generating content.';
-    }
-    const firstKey=Object.keys(prompts)[0];
-    showGenTab(firstKey, document.querySelector(`.gen-tab[onclick*="${firstKey}"]`));
-  } catch(e) {
-    document.getElementById('gen-output-blog').textContent='Error: '+e.message;
-  } finally {
-    btn.disabled=false; btn.textContent='⚡ Generate';
-  }
+ try {
+ for (const [key, prompt] of Object.entries(prompts)) {
+ const el=document.getElementById('gen-output-'+key);
+ el.textContent='Generating…'; el.classList.remove('empty');
+ const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+ const d=await r.json();
+ el.textContent=d.content?.find(c=>c.type==='text')?.text||'Error generating content.';
+ }
+ const firstKey=Object.keys(prompts)[0];
+ showGenTab(firstKey, document.querySelector(`.gen-tab[onclick*="${firstKey}"]`));
+ } catch(e) {
+ document.getElementById('gen-output-blog').textContent='Error: '+e.message;
+ } finally {
+ btn.disabled=false; btn.textContent='⚡ Generate';
+ }
 }
 
 function copyOutput() {
-  const el=document.getElementById('gen-output-'+currentGenTab);
-  navigator.clipboard.writeText(el.textContent).then(()=>{ event.target.textContent='Copied!'; setTimeout(()=>event.target.textContent='Copy',1500); });
+ const el=document.getElementById('gen-output-'+currentGenTab);
+ navigator.clipboard.writeText(el.textContent).then(()=>{ event.target.textContent='Copied!'; setTimeout(()=>event.target.textContent='Copy',1500); });
 }
 </script>
 </body>
