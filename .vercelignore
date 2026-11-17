@@ -1,0 +1,6 @@
+# Exclude archive folders from Vercel deployments
+Archive/
+archive/
+pages/services/Archives/
+**/Archive/
+**/archive/
